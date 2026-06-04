@@ -1,6 +1,6 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
+import { ReactiveFormsModule, FormBuilder, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { MatCardModule } from '@angular/material/card';
@@ -13,8 +13,14 @@ import { AuthActions } from '../store/auth.actions';
 import { selectAuthLoading, selectAuthError } from '../store/auth.selectors';
 import { AuthTokenService } from '../../../core/services/auth-token.service';
 
+function passwordMatchValidator(control: AbstractControl): ValidationErrors | null {
+  const password = control.get('password')?.value;
+  const confirm = control.get('confirmPassword')?.value;
+  return password && confirm && password !== confirm ? { passwordMismatch: true } : null;
+}
+
 @Component({
-  selector: 'app-login',
+  selector: 'app-register',
   standalone: true,
   imports: [
     CommonModule,
@@ -27,23 +33,29 @@ import { AuthTokenService } from '../../../core/services/auth-token.service';
     MatProgressSpinnerModule,
     MatIconModule,
   ],
-  templateUrl: './login.component.html',
-  styleUrls: ['./login.component.scss'],
+  templateUrl: './register.component.html',
+  styleUrls: ['./register.component.scss'],
 })
-export class LoginComponent implements OnInit {
+export class RegisterComponent implements OnInit {
   private fb = inject(FormBuilder);
   private store = inject(Store);
   private router = inject(Router);
   private tokenService = inject(AuthTokenService);
 
-  form = this.fb.group({
-    email: ['', [Validators.required, Validators.email]],
-    password: ['', [Validators.required, Validators.minLength(6)]],
-  });
+  form = this.fb.group(
+    {
+      username: ['', [Validators.required, Validators.minLength(3)]],
+      email: ['', [Validators.required, Validators.email]],
+      password: ['', [Validators.required, Validators.minLength(6)]],
+      confirmPassword: ['', [Validators.required]],
+    },
+    { validators: passwordMatchValidator }
+  );
 
   loading$ = this.store.select(selectAuthLoading);
   error$ = this.store.select(selectAuthError);
   hidePassword = true;
+  hideConfirm = true;
 
   ngOnInit(): void {
     if (this.tokenService.isLoggedIn()) {
@@ -53,8 +65,9 @@ export class LoginComponent implements OnInit {
 
   onSubmit(): void {
     if (this.form.valid) {
+      const { username, email, password } = this.form.getRawValue();
       this.store.dispatch(
-        AuthActions.login({ credentials: this.form.getRawValue() as any })
+        AuthActions.register({ request: { username: username!, email: email!, password: password! } })
       );
     }
   }

@@ -1,4 +1,4 @@
-.login-container {
+.register-container {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -6,7 +6,7 @@
   background: #f5f5f5;
 }
 
-.login-card {
+.register-card {
   width: 100%;
   max-width: 420px;
   padding: 16px;
@@ -22,12 +22,21 @@
   margin-bottom: 12px;
 }
 
-.login-btn {
+.submit-btn {
   height: 44px;
   font-size: 1rem;
 }
 
-.register-link {
+.error-banner {
+  background: #ffebee;
+  color: #c62828;
+  border-radius: 4px;
+  padding: 10px 14px;
+  margin-bottom: 16px;
+  font-size: 0.9rem;
+}
+
+.login-link {
   text-align: center;
   margin-top: 16px;
   font-size: 0.9rem;
@@ -40,13 +49,4 @@
 
     &:hover { text-decoration: underline; }
   }
-}
-
-.error-banner {
-  background: #ffebee;
-  color: #c62828;
-  border-radius: 4px;
-  padding: 10px 14px;
-  margin-bottom: 16px;
-  font-size: 0.9rem;
 }

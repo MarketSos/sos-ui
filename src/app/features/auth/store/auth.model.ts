@@ -1,19 +1,26 @@
 export interface User {
-  id: number;
-  username: string;
+  id: string;
   email: string;
-  roles: string[];
+  role: string;
 }
 
 export interface LoginRequest {
-  username: string;
+  email: string;
   password: string;
 }
 
 export interface LoginResponse {
   accessToken: string;
   refreshToken: string;
+  expiresAt: string;
+  role: string;
   user: User;
+}
+
+export interface RegisterRequest {
+  username: string;
+  email: string;
+  password: string;
 }
 
 export interface AuthState {
