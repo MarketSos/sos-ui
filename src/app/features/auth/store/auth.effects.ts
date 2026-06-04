@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Router } from '@angular/router';
-import { catchError, map, switchMap, tap } from 'rxjs/operators';
+import { catchError, map, switchMap, tap, exhaustMap } from 'rxjs/operators';
 import { of } from 'rxjs';
 import { AuthActions } from './auth.actions';
 import { AuthService } from '../auth.service';
@@ -69,6 +69,12 @@ export class AuthEffects {
     () =>
       this.actions$.pipe(
         ofType(AuthActions.logout),
+        exhaustMap(() => {
+          const refreshToken = this.tokenService.getRefreshToken() ?? '';
+          return this.authService.logout(refreshToken).pipe(
+            catchError(() => of(null))
+          );
+        }),
         tap(() => {
           this.tokenService.clearToken();
           this.router.navigate(['/auth/login']);
