@@ -1,0 +1,26 @@
+@use '@angular/material' as mat;
+
+@include mat.core();
+
+$sos-theme: mat.define-theme((
+  color: (
+    theme-type: light,
+    primary: mat.$azure-palette,
+    tertiary: mat.$blue-palette,
+  ),
+));
+
+html {
+  @include mat.all-component-themes($sos-theme);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+  background: #fafafa;
+}
