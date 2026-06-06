@@ -3,42 +3,101 @@ import { authGuard } from './core/guards/auth.guard';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'auth/login', pathMatch: 'full' },
+
+  // Auth (sidebar yo'q)
   {
     path: 'auth',
-    loadChildren: () =>
-      import('./features/auth/auth.routes').then((m) => m.AUTH_ROUTES),
+    loadChildren: () => import('./features/auth/auth.routes').then(m => m.AUTH_ROUTES),
   },
+
+  // Protected (sidebar bilan)
   {
-    path: 'dashboard',
+    path: 'app',
     canActivate: [authGuard],
-    loadComponent: () =>
-      import('./features/dashboard/dashboard.component').then(
-        (m) => m.DashboardComponent
-      ),
+    loadComponent: () => import('./layout/layout.component').then(m => m.LayoutComponent),
+    children: [
+      { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+
+      {
+        path: 'dashboard',
+        loadComponent: () => import('./features/dashboard/dashboard.component').then(m => m.DashboardComponent),
+      },
+
+      // Tashkilotlar
+      {
+        path: 'organizations',
+        loadComponent: () => import('./features/organizations/organizations.component').then(m => m.OrganizationsComponent),
+      },
+
+      // Xodimlar
+      {
+        path: 'employees',
+        loadComponent: () => import('./features/employees/employees.component').then(m => m.EmployeesComponent),
+      },
+
+      // Katalog
+      {
+        path: 'catalog',
+        children: [
+          { path: '', redirectTo: 'products', pathMatch: 'full' },
+          {
+            path: 'products',
+            loadComponent: () => import('./features/catalog/products/products.component').then(m => m.ProductsComponent),
+          },
+          {
+            path: 'stock',
+            loadComponent: () => import('./features/catalog/stock/stock.component').then(m => m.StockComponent),
+          },
+          {
+            path: 'pricing',
+            loadComponent: () => import('./features/catalog/pricing/pricing.component').then(m => m.PricingComponent),
+          },
+        ],
+      },
+
+      // Savdo
+      {
+        path: 'commerce',
+        children: [
+          { path: '', redirectTo: 'pos', pathMatch: 'full' },
+          {
+            path: 'pos',
+            loadComponent: () => import('./features/commerce/pos/pos.component').then(m => m.PosComponent),
+          },
+          {
+            path: 'customers',
+            loadComponent: () => import('./features/commerce/customers/customers.component').then(m => m.CustomersComponent),
+          },
+          {
+            path: 'loyalty',
+            loadComponent: () => import('./features/commerce/loyalty/loyalty.component').then(m => m.LoyaltyComponent),
+          },
+        ],
+      },
+
+      // Hisobotlar
+      {
+        path: 'analytics',
+        loadComponent: () => import('./features/analytics/analytics.component').then(m => m.AnalyticsComponent),
+      },
+
+      // Sozlamalar
+      {
+        path: 'settings',
+        children: [
+          { path: '', redirectTo: 'users', pathMatch: 'full' },
+          {
+            path: 'users',
+            loadComponent: () => import('./features/settings/users/users.component').then(m => m.UsersComponent),
+          },
+          {
+            path: 'roles',
+            loadComponent: () => import('./features/settings/roles/roles.component').then(m => m.RolesComponent),
+          },
+        ],
+      },
+    ],
   },
-  {
-    path: 'products',
-    canActivate: [authGuard],
-    loadChildren: () =>
-      import('./features/products/products.routes').then((m) => m.PRODUCT_ROUTES),
-  },
-  {
-    path: 'orders',
-    canActivate: [authGuard],
-    loadChildren: () =>
-      import('./features/orders/orders.routes').then((m) => m.ORDER_ROUTES),
-  },
-  {
-    path: 'inventory',
-    canActivate: [authGuard],
-    loadChildren: () =>
-      import('./features/inventory/inventory.routes').then((m) => m.INVENTORY_ROUTES),
-  },
-  {
-    path: 'reports',
-    canActivate: [authGuard],
-    loadChildren: () =>
-      import('./features/reports/reports.routes').then((m) => m.REPORT_ROUTES),
-  },
+
   { path: '**', redirectTo: 'auth/login' },
 ];

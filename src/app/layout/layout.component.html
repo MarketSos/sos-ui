@@ -1,0 +1,113 @@
+<p-toast />
+
+<div class="app-shell" [class.collapsed]="collapsed()">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      @if (!collapsed()) {
+        <span class="logo-text">SOS</span>
+        <span class="logo-sub">Store OS</span>
+      } @else {
+        <span class="logo-icon">S</span>
+      }
+    </div>
+
+    <nav class="sidebar-nav">
+      @for (item of navItems(); track item.label) {
+        @if (item | visibleFor: (user$ | async)?.role) {
+          @if (item.children) {
+            <!-- Group -->
+            <div class="nav-group">
+              <button
+                class="nav-group-toggle"
+                [class.active]="isExpanded(item.label)"
+                (click)="toggleGroup(item.label)"
+                [title]="collapsed() ? item.label : ''"
+              >
+                <i [class]="item.icon"></i>
+                @if (!collapsed()) {
+                  <span>{{ item.label }}</span>
+                  <i class="pi group-arrow" [class.pi-angle-down]="isExpanded(item.label)" [class.pi-angle-right]="!isExpanded(item.label)"></i>
+                }
+              </button>
+              @if (isExpanded(item.label) && !collapsed()) {
+                <div class="nav-children">
+                  @for (child of item.children; track child.label) {
+                    @if (child | visibleFor: (user$ | async)?.role) {
+                      <a
+                        class="nav-child"
+                        [routerLink]="child.route"
+                        routerLinkActive="active"
+                      >
+                        <i [class]="child.icon"></i>
+                        <span>{{ child.label }}</span>
+                      </a>
+                    }
+                  }
+                </div>
+              }
+            </div>
+          } @else {
+            <!-- Single item -->
+            <a
+              class="nav-item"
+              [routerLink]="item.route"
+              routerLinkActive="active"
+              [title]="collapsed() ? item.label : ''"
+            >
+              <i [class]="item.icon"></i>
+              @if (!collapsed()) {
+                <span>{{ item.label }}</span>
+              }
+            </a>
+          }
+        }
+      }
+    </nav>
+
+    <div class="sidebar-footer">
+      <button class="collapse-btn" (click)="toggleSidebar()" [title]="collapsed() ? 'Kengaytirish' : 'Yig\'ish'">
+        <i class="pi" [class.pi-angle-double-left]="!collapsed()" [class.pi-angle-double-right]="collapsed()"></i>
+      </button>
+    </div>
+  </aside>
+
+  <!-- MAIN AREA -->
+  <div class="main-area">
+
+    <!-- TOPBAR -->
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="menu-btn" (click)="toggleSidebar()">
+          <i class="pi pi-bars"></i>
+        </button>
+      </div>
+      <div class="topbar-right">
+        @if (user$ | async; as user) {
+          <div class="user-info">
+            <div class="user-avatar">{{ user.username?.charAt(0)?.toUpperCase() }}</div>
+            <div class="user-details">
+              <span class="user-name">{{ user.username }}</span>
+              <span class="user-role">{{ user.role }}</span>
+            </div>
+          </div>
+        }
+        <p-button
+          icon="pi pi-sign-out"
+          [rounded]="true"
+          [text]="true"
+          severity="secondary"
+          (onClick)="logout()"
+          title="Chiqish"
+        />
+      </div>
+    </header>
+
+    <!-- PAGE CONTENT -->
+    <main class="page-content">
+      <router-outlet />
+    </main>
+
+  </div>
+</div>
