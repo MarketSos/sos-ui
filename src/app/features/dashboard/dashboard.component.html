@@ -1,0 +1,88 @@
+<div class="dashboard">
+
+  <!-- Header -->
+  <div class="page-header">
+    <div>
+      <h1>Dashboard</h1>
+      <p>Savdo umumiy ko'rinishi</p>
+    </div>
+    <p-selectButton
+      [options]="periods"
+      [ngModel]="selectedPeriod()"
+      (ngModelChange)="onPeriodChange($event)"
+      optionLabel="label"
+      optionValue="value"
+    />
+  </div>
+
+  <!-- Stat Cards -->
+  <div class="stat-grid">
+
+    <div class="stat-card">
+      <div class="stat-icon revenue">
+        <i class="pi pi-wallet"></i>
+      </div>
+      <div class="stat-body">
+        <span class="stat-label">Jami daromad</span>
+        @if (loading()) {
+          <p-skeleton height="1.75rem" width="140px" />
+        } @else {
+          <span class="stat-value">
+            {{ summary() ? formatCurrency(summary()!.totalRevenue) : '—' }}
+          </span>
+        }
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon sales">
+        <i class="pi pi-shopping-cart"></i>
+      </div>
+      <div class="stat-body">
+        <span class="stat-label">Sotuvlar soni</span>
+        @if (loading()) {
+          <p-skeleton height="1.75rem" width="80px" />
+        } @else {
+          <span class="stat-value">
+            {{ summary()?.totalSales ?? '—' }}
+          </span>
+        }
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon avg">
+        <i class="pi pi-receipt"></i>
+      </div>
+      <div class="stat-body">
+        <span class="stat-label">O'rtacha chek</span>
+        @if (loading()) {
+          <p-skeleton height="1.75rem" width="120px" />
+        } @else {
+          <span class="stat-value">
+            {{ summary() ? formatCurrency(summary()!.averageOrderValue) : '—' }}
+          </span>
+        }
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Chart -->
+  <p-card styleClass="chart-card">
+    <ng-template pTemplate="title">Statistika</ng-template>
+    @if (loading()) {
+      <p-skeleton height="260px" />
+    } @else if (chartData()) {
+      <div class="chart-wrap">
+        <p-chart type="bar" [data]="chartData()" [options]="chartOptions()" />
+      </div>
+    } @else {
+      <div class="no-data">
+        <i class="pi pi-chart-bar"></i>
+        <p>Ma'lumot topilmadi</p>
+      </div>
+    }
+  </p-card>
+
+</div>
