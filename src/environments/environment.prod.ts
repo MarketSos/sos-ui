@@ -1,4 +1,9 @@
 export const environment = {
   production: true,
-  apiUrl: '/api/identity',
+  apiUrls: {
+    core:      '/api/core',
+    catalog:   '/api/catalog',
+    commerce:  '/api/commerce',
+    analytics: '/api/analytics',
+  },
 };

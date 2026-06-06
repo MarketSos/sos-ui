@@ -1,71 +1,62 @@
-<div class="login-container">
-  <mat-card class="login-card">
-    <mat-card-header>
-      <mat-card-title>SOS - Store Operation System</mat-card-title>
-      <mat-card-subtitle>Tizimga kiring</mat-card-subtitle>
-    </mat-card-header>
+<div class="auth-wrapper">
+  <p-card styleClass="auth-card">
+    <ng-template pTemplate="header">
+      <div class="auth-header">
+        <h2>SOS</h2>
+        <p>Store Operation System</p>
+      </div>
+    </ng-template>
 
-    <mat-card-content>
-      <form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="auth-form">
+      @if (error$ | async; as error) {
+        <p-message severity="error" [text]="error" styleClass="w-full mb-3" />
+      }
 
-        <div *ngIf="error$ | async as error" class="error-banner">
-          {{ error }}
-        </div>
+      <div class="field">
+        <label for="email">Email</label>
+        <input
+          pInputText
+          id="email"
+          type="email"
+          formControlName="email"
+          placeholder="email@example.com"
+          class="w-full"
+          autocomplete="email"
+        />
+        @if (form.get('email')?.invalid && form.get('email')?.touched) {
+          <small class="error-text">To'g'ri email kiriting</small>
+        }
+      </div>
 
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Email</mat-label>
-          <input matInput formControlName="email" type="email" autocomplete="email" />
-          <mat-icon matSuffix>email</mat-icon>
-          <mat-error *ngIf="form.get('email')?.hasError('required')">
-            Email majburiy
-          </mat-error>
-          <mat-error *ngIf="form.get('email')?.hasError('email')">
-            Email formati noto'g'ri
-          </mat-error>
-        </mat-form-field>
+      <div class="field">
+        <label for="password">Parol</label>
+        <p-password
+          inputId="password"
+          formControlName="password"
+          placeholder="••••••••"
+          [feedback]="false"
+          [toggleMask]="true"
+          styleClass="w-full"
+          inputStyleClass="w-full"
+          autocomplete="current-password"
+        />
+        @if (form.get('password')?.invalid && form.get('password')?.touched) {
+          <small class="error-text">Kamida 6 ta belgi</small>
+        }
+      </div>
 
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Parol</mat-label>
-          <input
-            matInput
-            formControlName="password"
-            [type]="hidePassword ? 'password' : 'text'"
-            autocomplete="current-password"
-          />
-          <button
-            mat-icon-button
-            matSuffix
-            type="button"
-            (click)="hidePassword = !hidePassword"
-          >
-            <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
-          </button>
-          <mat-error *ngIf="form.get('password')?.hasError('required')">
-            Parol majburiy
-          </mat-error>
-          <mat-error *ngIf="form.get('password')?.hasError('minlength')">
-            Kamida 6 ta belgi
-          </mat-error>
-        </mat-form-field>
+      <p-button
+        type="submit"
+        label="Kirish"
+        icon="pi pi-sign-in"
+        styleClass="w-full"
+        [loading]="(loading$ | async) ?? false"
+        [disabled]="form.invalid"
+      />
 
-        <button
-          mat-raised-button
-          color="primary"
-          type="submit"
-          class="full-width login-btn"
-          [disabled]="form.invalid || (loading$ | async)"
-        >
-          <ng-container *ngIf="loading$ | async; else loginLabel">
-            <mat-spinner diameter="20"></mat-spinner>
-          </ng-container>
-          <ng-template #loginLabel>Kirish</ng-template>
-        </button>
-
-        <p class="register-link">
-          Hisobingiz yo'qmi? <a routerLink="/auth/register">Ro'yxatdan o'ting</a>
-        </p>
-
-      </form>
-    </mat-card-content>
-  </mat-card>
+      <p class="auth-link">
+        Hisobingiz yo'qmi? <a routerLink="/auth/register">Ro'yxatdan o'ting</a>
+      </p>
+    </form>
+  </p-card>
 </div>

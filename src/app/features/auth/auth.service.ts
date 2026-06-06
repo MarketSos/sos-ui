@@ -8,14 +8,14 @@ export class AuthService {
   constructor(private api: ApiService) {}
 
   login(credentials: LoginRequest): Observable<LoginResponse> {
-    return this.api.post<LoginResponse>('auth/login', credentials);
+    return this.api.post<LoginResponse>('core', 'auth/login', credentials);
   }
 
   register(request: RegisterRequest): Observable<LoginResponse> {
-    return this.api.post<LoginResponse>('auth/register', request);
+    return this.api.post<LoginResponse>('core', 'auth/register', request);
   }
 
   logout(refreshToken: string): Observable<void> {
-    return this.api.post<void>('auth/logout', { refreshToken });
+    return this.api.post<void>('core', 'auth/logout', { refreshToken });
   }
 }
