@@ -1,0 +1,169 @@
+<p-toast />
+<p-confirmDialog />
+
+<div class="page">
+
+  <!-- Header -->
+  <div class="page-header">
+    <div>
+      <h1>Tashkilotlar</h1>
+      <p>Barcha tashkilotlar ro'yxati</p>
+    </div>
+    <p-button label="Yangi tashkilot" icon="pi pi-plus" (onClick)="openCreate()" />
+  </div>
+
+  <!-- Table -->
+  <p-table
+    [value]="orgs()"
+    [loading]="loading()"
+    [paginator]="true"
+    [rows]="15"
+    [rowsPerPageOptions]="[10, 15, 25]"
+    [globalFilterFields]="['nameUz', 'nameRu', 'code', 'slug']"
+    styleClass="p-datatable-sm"
+    #dt
+  >
+    <ng-template pTemplate="caption">
+      <div class="table-caption">
+        <span class="p-input-icon-left">
+          <i class="pi pi-search"></i>
+          <input pInputText type="text" placeholder="Qidirish..." (input)="dt.filterGlobal($any($event.target).value, 'contains')" />
+        </span>
+      </div>
+    </ng-template>
+
+    <ng-template pTemplate="header">
+      <tr>
+        <th pSortableColumn="nameUz">Nomi (UZ) <p-sortIcon field="nameUz" /></th>
+        <th pSortableColumn="nameRu">Nomi (RU) <p-sortIcon field="nameRu" /></th>
+        <th>Slug</th>
+        <th pSortableColumn="code">Kod <p-sortIcon field="code" /></th>
+        <th>Holat</th>
+        <th style="width:130px">Amallar</th>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-org>
+      <tr>
+        <td><strong>{{ org.nameUz }}</strong></td>
+        <td>{{ org.nameRu }}</td>
+        <td><code class="slug">{{ org.slug ?? '—' }}</code></td>
+        <td>{{ org.code ?? '—' }}</td>
+        <td>
+          <p-tag
+            [value]="org.isActive ? 'Faol' : 'Nofaol'"
+            [severity]="org.isActive ? 'success' : 'danger'"
+          />
+        </td>
+        <td>
+          <div class="action-btns">
+            <p-button
+              icon="pi pi-pencil"
+              [rounded]="true" [text]="true"
+              severity="info"
+              (onClick)="openEdit(org)"
+            />
+            <p-button
+              [icon]="org.isActive ? 'pi pi-eye-slash' : 'pi pi-eye'"
+              [rounded]="true" [text]="true"
+              [severity]="$any(org.isActive ? 'warning' : 'success')"
+              (onClick)="toggleStatus(org)"
+            />
+            <p-button
+              icon="pi pi-trash"
+              [rounded]="true" [text]="true"
+              severity="danger"
+              (onClick)="confirmDelete(org)"
+            />
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td colspan="6" class="empty-msg">
+          <i class="pi pi-building"></i>
+          <span>Tashkilotlar topilmadi</span>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+
+</div>
+
+<!-- Create / Edit Dialog -->
+<p-dialog
+  [header]="editingId() ? 'Tashkilotni tahrirlash' : 'Yangi tashkilot'"
+  [visible]="dialogVisible()"
+  (visibleChange)="$event || closeDialog()"
+  [style]="{ width: '520px' }"
+  [modal]="true"
+  [draggable]="false"
+>
+  <form [formGroup]="form" class="dialog-form">
+
+    <div class="form-row">
+      <div class="field">
+        <label>Nomi (UZ) <span class="req">*</span></label>
+        <input pInputText formControlName="nameUz" placeholder="O'zbekcha nomi" class="w-full" />
+        @if (form.get('nameUz')?.invalid && form.get('nameUz')?.touched) {
+          <small class="err">Majburiy maydon</small>
+        }
+      </div>
+      <div class="field">
+        <label>Nomi (RU) <span class="req">*</span></label>
+        <input pInputText formControlName="nameRu" placeholder="Русское название" class="w-full" />
+        @if (form.get('nameRu')?.invalid && form.get('nameRu')?.touched) {
+          <small class="err">Majburiy maydon</small>
+        }
+      </div>
+    </div>
+
+    @if (!editingId()) {
+      <div class="form-row">
+        <div class="field">
+          <label>Slug <span class="req">*</span></label>
+          <input pInputText formControlName="slug" placeholder="my-org" class="w-full" />
+          <small class="hint">Faqat kichik harf, raqam va "-"</small>
+          @if (form.get('slug')?.invalid && form.get('slug')?.touched) {
+            <small class="err">Noto'g'ri format</small>
+          }
+        </div>
+        <div class="field">
+          <label>Kod</label>
+          <input pInputText formControlName="code" placeholder="ORG-001" class="w-full" />
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="field">
+          <label>STIR (TIN)</label>
+          <input pInputText formControlName="tin" placeholder="123456789" class="w-full" />
+        </div>
+        <div class="field">
+          <label>Tashkilot turi</label>
+          <p-select
+            formControlName="orgType"
+            [options]="orgTypes"
+            optionLabel="label"
+            optionValue="value"
+            placeholder="Tanlang"
+            styleClass="w-full"
+          />
+        </div>
+      </div>
+    }
+
+  </form>
+
+  <ng-template pTemplate="footer">
+    <p-button label="Bekor qilish" [text]="true" severity="secondary" (onClick)="closeDialog()" />
+    <p-button
+      [label]="editingId() ? 'Saqlash' : 'Yaratish'"
+      [icon]="saving() ? 'pi pi-spin pi-spinner' : 'pi pi-check'"
+      [disabled]="form.invalid || saving()"
+      (onClick)="save()"
+    />
+  </ng-template>
+</p-dialog>
