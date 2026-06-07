@@ -1,0 +1,173 @@
+<p-toast />
+
+<div class="page">
+
+  <!-- Header -->
+  <div class="page-header">
+    <div>
+      <h1>Ombor</h1>
+      <p>Mahsulotlar qoldig'i va holati</p>
+    </div>
+    <div class="header-right">
+      @if (lowCount() > 0) {
+        <div class="low-badge">
+          <i class="pi pi-exclamation-triangle"></i>
+          {{ lowCount() }} ta mahsulot kam qolgan
+        </div>
+      }
+      <p-button icon="pi pi-refresh" [rounded]="true" [text]="true" severity="secondary" (onClick)="load()" title="Yangilash" />
+    </div>
+  </div>
+
+  <!-- Toolbar -->
+  <div class="toolbar">
+    <p-iconfield>
+      <p-inputicon styleClass="pi pi-search" />
+      <input
+        pInputText
+        [(ngModel)]="searchQuery"
+        (ngModelChange)="onSearch($event)"
+        placeholder="Mahsulot nomi yoki barcode..."
+        style="width: 300px"
+      />
+    </p-iconfield>
+
+    <p-selectButton
+      [options]="filterOptions"
+      [ngModel]="activeFilter()"
+      (ngModelChange)="activeFilter.set($event)"
+      optionLabel="label"
+      optionValue="value"
+    />
+  </div>
+
+  <!-- Table -->
+  <p-table
+    [value]="displayedItems()"
+    [loading]="loading()"
+    [paginator]="true"
+    [rows]="20"
+    [rowsPerPageOptions]="[10, 20, 50]"
+    styleClass="p-datatable-sm"
+  >
+    <ng-template pTemplate="header">
+      <tr>
+        <th pSortableColumn="productNameUz">Mahsulot <p-sortIcon field="productNameUz" /></th>
+        <th>Barcode</th>
+        <th pSortableColumn="quantity" style="width:110px">Qoldiq <p-sortIcon field="quantity" /></th>
+        <th style="width:120px">Min / Max</th>
+        <th style="width:100px">Holat</th>
+        <th style="width:150px">Amallar</th>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-item>
+      <tr [class.row-low]="item.isLow">
+        <td>
+          <div class="product-name">{{ item.productNameUz }}</div>
+          <small class="product-ru">{{ item.productNameRu }}</small>
+        </td>
+        <td><code class="barcode">{{ item.barcode }}</code></td>
+        <td>
+          <span class="qty" [class.qty-low]="item.isLow">{{ item.quantity }}</span>
+        </td>
+        <td>
+          <span class="min-qty">min: {{ item.minQuantity }}</span>
+          @if (item.maxQuantity) {
+            <span class="max-qty"> / max: {{ item.maxQuantity }}</span>
+          }
+        </td>
+        <td>
+          <p-tag
+            [value]="item.isLow ? 'Kam' : 'Normal'"
+            [severity]="item.isLow ? 'danger' : 'success'"
+          />
+        </td>
+        <td>
+          <div class="action-btns">
+            <p-button
+              icon="pi pi-plus"
+              [rounded]="true" [text]="true"
+              severity="success"
+              (onClick)="openDialog(item, 'add')"
+              title="Kirim"
+              size="small"
+            />
+            <p-button
+              icon="pi pi-minus"
+              [rounded]="true" [text]="true"
+              [severity]="$any('warning')"
+              (onClick)="openDialog(item, 'deduct')"
+              title="Chiqim"
+              size="small"
+            />
+            <p-button
+              icon="pi pi-sliders-h"
+              [rounded]="true" [text]="true"
+              severity="secondary"
+              (onClick)="openDialog(item, 'min')"
+              title="Min miqdor"
+              size="small"
+            />
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td colspan="6" class="empty-msg">
+          <i class="pi pi-warehouse"></i>
+          <span>Ombor bo'sh yoki mahsulot topilmadi</span>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>
+
+<!-- Dialog -->
+<p-dialog
+  [header]="dialogTitle"
+  [visible]="dialogVisible()"
+  (visibleChange)="$event || dialogVisible.set(false)"
+  [style]="{ width: '360px' }"
+  [modal]="true"
+  [draggable]="false"
+>
+  @if (selectedItem(); as item) {
+    <div class="dialog-product">
+      <i class="pi pi-box"></i>
+      <div>
+        <div class="dp-name">{{ item.productNameUz }}</div>
+        <div class="dp-meta">
+          Hozir: <strong>{{ item.quantity }}</strong> dona
+          · Min: {{ item.minQuantity }}
+        </div>
+      </div>
+    </div>
+  }
+
+  <form [formGroup]="form" class="dialog-form">
+    <div class="field">
+      <label>{{ dialogLabel }} <span class="req">*</span></label>
+      <p-inputnumber
+        formControlName="amount"
+        [min]="0"
+        [showButtons]="true"
+        styleClass="w-full"
+      />
+    </div>
+  </form>
+
+  <ng-template pTemplate="footer">
+    <p-button label="Bekor" [text]="true" severity="secondary" (onClick)="dialogVisible.set(false)" />
+    <p-button
+      [label]="dialogMode() === 'add' ? 'Qo\'shish' : dialogMode() === 'deduct' ? 'Chiqarish' : 'Saqlash'"
+      [icon]="dialogMode() === 'add' ? 'pi pi-plus' : dialogMode() === 'deduct' ? 'pi pi-minus' : 'pi pi-check'"
+      [severity]="$any(dialogMode() === 'add' ? 'success' : dialogMode() === 'deduct' ? 'warning' : 'primary')"
+      [loading]="saving()"
+      [disabled]="form.invalid"
+      (onClick)="save()"
+    />
+  </ng-template>
+</p-dialog>
