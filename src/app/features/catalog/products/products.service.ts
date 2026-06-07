@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ApiService } from '../../../core/services/api.service';
-import { Product, Sku, MeasurementUnit, CreateProductRequest, CreateSkuRequest } from './products.models';
+import { Product, Sku, MeasurementUnit, Category, CreateProductRequest, CreateSkuRequest } from './products.models';
 
 @Injectable({ providedIn: 'root' })
 export class ProductsService {
@@ -32,5 +32,9 @@ export class ProductsService {
 
   getMeasurementUnits(): Observable<MeasurementUnit[]> {
     return this.api.get<MeasurementUnit[]>('catalog', 'measurement-units');
+  }
+
+  getCategories(): Observable<Category[]> {
+    return this.api.get<Category[]>('catalog', 'categories');
   }
 }

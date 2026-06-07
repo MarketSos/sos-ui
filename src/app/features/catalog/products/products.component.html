@@ -38,6 +38,7 @@
         <th>Nomi (UZ)</th>
         <th>Nomi (RU)</th>
         <th>Barcode</th>
+        <th>Kategoriya</th>
         <th>Holat</th>
         <th style="width: 100px">Amallar</th>
       </tr>
@@ -48,6 +49,7 @@
         <td><strong>{{ p.nameUz }}</strong></td>
         <td>{{ p.nameRu }}</td>
         <td><code class="barcode">{{ p.barcode }}</code></td>
+        <td>{{ categoryLabel(p.categoryId) }}</td>
         <td>
           <p-tag
             [value]="p.isActive ? 'Faol' : 'Nofaol'"
@@ -68,7 +70,7 @@
 
     <ng-template pTemplate="emptymessage">
       <tr>
-        <td colspan="5" class="empty-msg">
+        <td colspan="6" class="empty-msg">
           <i class="pi pi-box"></i>
           <span>Mahsulotlar topilmadi</span>
         </td>
@@ -82,31 +84,80 @@
   header="Yangi mahsulot"
   [visible]="createDialogVisible()"
   (visibleChange)="$event || createDialogVisible.set(false)"
-  [style]="{ width: '480px' }"
+  [style]="{ width: '520px' }"
   [modal]="true"
   [draggable]="false"
 >
   <form [formGroup]="createForm" class="dialog-form">
+
     <div class="form-row">
       <div class="field">
         <label>Nomi (UZ) <span class="req">*</span></label>
         <input pInputText formControlName="nameUz" placeholder="O'zbekcha" class="w-full" />
+        @if (createForm.get('nameUz')?.invalid && createForm.get('nameUz')?.touched) {
+          <small class="err">Majburiy, kamida 2 ta belgi</small>
+        }
       </div>
       <div class="field">
         <label>Nomi (RU) <span class="req">*</span></label>
         <input pInputText formControlName="nameRu" placeholder="Русский" class="w-full" />
+        @if (createForm.get('nameRu')?.invalid && createForm.get('nameRu')?.touched) {
+          <small class="err">Majburiy, kamida 2 ta belgi</small>
+        }
       </div>
     </div>
+
+    <div class="form-row">
+      <div class="field">
+        <label>Nomi (EN)</label>
+        <input pInputText formControlName="nameEn" placeholder="English" class="w-full" />
+      </div>
+      <div class="field">
+        <label>Nomi (Kiril)</label>
+        <input pInputText formControlName="nameUzKiril" placeholder="Ўзбекча" class="w-full" />
+      </div>
+    </div>
+
     <div class="form-row">
       <div class="field">
         <label>Barcode <span class="req">*</span></label>
         <input pInputText formControlName="barcode" placeholder="EAN-13 yoki ichki kod" class="w-full" />
+        @if (createForm.get('barcode')?.invalid && createForm.get('barcode')?.touched) {
+          <small class="err">Majburiy</small>
+        }
       </div>
       <div class="field">
-        <label>Kategoriya ID <span class="req">*</span></label>
-        <input pInputText formControlName="categoryId" placeholder="UUID" class="w-full" />
+        <label>Kategoriya <span class="req">*</span></label>
+        <p-autocomplete
+          [ngModel]="selectedCategory()"
+          (ngModelChange)="selectedCategory.set($event)"
+          [ngModelOptions]="{ standalone: true }"
+          [suggestions]="filteredCategories()"
+          (completeMethod)="filterCategories($event)"
+          optionLabel="nameUz"
+          placeholder="Kategoriya tanlang..."
+          [forceSelection]="true"
+          [dropdown]="true"
+          styleClass="w-full"
+          inputStyleClass="w-full"
+        >
+          <ng-template let-cat pTemplate="item">
+            <div class="cat-item">
+              <span class="cat-name">{{ cat.nameUz }}</span>
+              @if (cat.parentId) {
+                <small class="cat-sub">{{ cat.nameRu }}</small>
+              } @else {
+                <small class="cat-root">Root</small>
+              }
+            </div>
+          </ng-template>
+        </p-autocomplete>
+        @if (!isCategorySelected) {
+          <small class="err">Kategoriya tanlanmagan</small>
+        }
       </div>
     </div>
+
   </form>
 
   <ng-template pTemplate="footer">
@@ -115,7 +166,7 @@
       label="Yaratish"
       icon="pi pi-check"
       [loading]="saving()"
-      [disabled]="createForm.invalid"
+      [disabled]="createForm.invalid || !isCategorySelected"
       (onClick)="saveProduct()"
     />
   </ng-template>
@@ -137,13 +188,8 @@
     </p-tablist>
 
     <p-tabpanels>
-      <!-- List -->
       <p-tabpanel value="list">
-        <p-table
-          [value]="skus()"
-          [loading]="skuLoading()"
-          styleClass="p-datatable-sm"
-        >
+        <p-table [value]="skus()" [loading]="skuLoading()" styleClass="p-datatable-sm">
           <ng-template pTemplate="header">
             <tr>
               <th>Serial №</th>
@@ -168,7 +214,6 @@
         </p-table>
       </p-tabpanel>
 
-      <!-- Add SKU -->
       <p-tabpanel value="add">
         <form [formGroup]="skuForm" class="dialog-form">
           <div class="form-row">
@@ -191,17 +236,17 @@
           <div class="form-row">
             <div class="field">
               <label>Miqdor <span class="req">*</span></label>
-              <p-inputnumber formControlName="amount" [min]="0.001" [minFractionDigits]="0" [maxFractionDigits]="3" class="w-full" />
+              <p-inputnumber formControlName="amount" [min]="0.001" [minFractionDigits]="0" [maxFractionDigits]="3" styleClass="w-full" />
             </div>
             <div class="field">
               <label>Tan narx (so'm) <span class="req">*</span></label>
-              <p-inputnumber formControlName="costPrice" [min]="0" mode="decimal" class="w-full" />
+              <p-inputnumber formControlName="costPrice" [min]="0" mode="decimal" styleClass="w-full" />
             </div>
           </div>
           <div class="form-row">
             <div class="field">
               <label>Sotuv narx (so'm) <span class="req">*</span></label>
-              <p-inputnumber formControlName="salePrice" [min]="0" mode="decimal" class="w-full" />
+              <p-inputnumber formControlName="salePrice" [min]="0" mode="decimal" styleClass="w-full" />
             </div>
           </div>
           <div style="display:flex; justify-content:flex-end; margin-top:0.5rem">

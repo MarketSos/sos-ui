@@ -25,6 +25,14 @@ export interface Sku {
   receiptDate: string;
 }
 
+export interface Category {
+  id: string;
+  nameUz: string;
+  nameRu: string;
+  nameEn: string | null;
+  parentId: string | null;
+}
+
 export interface MeasurementUnit {
   id: string;
   code: string;
