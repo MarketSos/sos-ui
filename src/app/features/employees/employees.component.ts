@@ -1,6 +1,6 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule, ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
@@ -9,6 +9,7 @@ import { ToastModule } from 'primeng/toast';
 import { DialogModule } from 'primeng/dialog';
 import { InputTextModule } from 'primeng/inputtext';
 import { SelectModule } from 'primeng/select';
+import { PasswordModule } from 'primeng/password';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
@@ -16,13 +17,19 @@ import { MessageService, ConfirmationService } from 'primeng/api';
 import { catchError, forkJoin, of } from 'rxjs';
 import { CoreApiService, EmployeeSummaryDto, EmployeeDto, UserDto } from '../../core/services/core-api.service';
 
+function passwordsMatchValidator(group: AbstractControl): ValidationErrors | null {
+  const pass    = group.get('newPassword')?.value;
+  const confirm = group.get('confirmPassword')?.value;
+  return pass && confirm && pass !== confirm ? { passwordMismatch: true } : null;
+}
+
 @Component({
   selector: 'app-employees',
   standalone: true,
   imports: [
     CommonModule, FormsModule, ReactiveFormsModule,
     TableModule, ButtonModule, TagModule, ToastModule,
-    DialogModule, InputTextModule, SelectModule,
+    DialogModule, InputTextModule, SelectModule, PasswordModule,
     ConfirmDialogModule, IconFieldModule, InputIconModule,
   ],
   providers: [MessageService, ConfirmationService],
@@ -41,11 +48,13 @@ export class EmployeesComponent implements OnInit {
   saving      = signal(false);
   searchQuery = '';
 
-  createDialogVisible = signal(false);
-  detailDialogVisible = signal(false);
-  hireDialogVisible   = signal(false);
-  fireDialogVisible   = signal(false);
-  selectedEmployee    = signal<EmployeeDto | null>(null);
+  createDialogVisible  = signal(false);
+  detailDialogVisible  = signal(false);
+  hireDialogVisible    = signal(false);
+  fireDialogVisible    = signal(false);
+  accountDialogVisible = signal(false);
+  selectedEmployee     = signal<EmployeeDto | null>(null);
+  selectedAccount      = signal<UserDto | null>(null);
 
   createForm = this.fb.group({
     userId:    ['', Validators.required],
@@ -57,6 +66,11 @@ export class EmployeesComponent implements OnInit {
 
   hireForm = this.fb.group({ hireDate: ['', Validators.required] });
   fireForm = this.fb.group({ fireDate: ['', Validators.required] });
+
+  accountForm: FormGroup = this.fb.group({
+    newPassword:     ['', [Validators.minLength(6)]],
+    confirmPassword: [''],
+  }, { validators: passwordsMatchValidator });
 
   get filteredEmployees(): EmployeeSummaryDto[] {
     if (!this.searchQuery.trim()) return this.employees();
@@ -185,5 +199,46 @@ export class EmployeesComponent implements OnInit {
   get availableUsers(): UserDto[] {
     const empUserIds = new Set(this.employees().map(e => e.userId));
     return this.users().filter(u => !empUserIds.has(u.id));
+  }
+
+  openAccountSettings(emp: EmployeeSummaryDto): void {
+    const account = this.users().find(u => u.id === emp.userId) ?? null;
+    this.selectedAccount.set(account);
+    this.accountForm.reset({ newPassword: '', confirmPassword: '' });
+    this.accountDialogVisible.set(true);
+  }
+
+  updateAccountPassword(): void {
+    const account = this.selectedAccount();
+    if (this.accountForm.invalid || !account) return;
+    this.saving.set(true);
+    this.svc.resetPassword(account.id, this.accountForm.getRawValue().newPassword!)
+      .pipe(catchError(err => {
+        this.toast.add({ severity: 'error', summary: 'Xato', detail: err.error?.error ?? 'Xato' });
+        this.saving.set(false);
+        return of(undefined);
+      })).subscribe(() => {
+        this.saving.set(false);
+        this.toast.add({ severity: 'success', summary: 'Parol yangilandi', detail: account.userName });
+        this.accountForm.reset({ newPassword: '', confirmPassword: '' });
+      });
+  }
+
+  toggleAccountStatus(): void {
+    const account = this.selectedAccount();
+    if (!account) return;
+    const req$: Observable<void> = account.isActive
+      ? this.svc.deactivateUser(account.id)
+      : this.svc.activateUser(account.id);
+
+    req$.pipe(catchError(err => {
+      this.toast.add({ severity: 'error', summary: 'Xato', detail: err.error?.error ?? 'Xato' });
+      return of(undefined);
+    })).subscribe(() => {
+      const updated = { ...account, isActive: !account.isActive };
+      this.selectedAccount.set(updated);
+      this.users.update(list => list.map(u => u.id === account.id ? updated : u));
+      this.toast.add({ severity: 'success', summary: updated.isActive ? 'Hisob faollashtirildi' : 'Hisob faolsizlantirildi', detail: account.userName });
+    });
   }
 }

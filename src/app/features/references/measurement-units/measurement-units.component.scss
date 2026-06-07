@@ -1,0 +1,27 @@
+.page {
+  .page-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .empty-msg {
+    text-align: center;
+    padding: 1rem 0;
+    color: var(--text-secondary);
+  }
+}
+
+.dialog-form {
+  display: grid;
+  gap: 1rem;
+}
+
+.checkbox-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}

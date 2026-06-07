@@ -35,6 +35,32 @@ export interface OrgTypeDto {
   icon: string | null;
 }
 
+export interface SpecializationDto {
+  id: string;
+  code: string;
+  nameUz: string;
+  nameRu: string;
+  nameEn: string | null;
+  nameUzKiril: string | null;
+}
+
+export interface CategoryDto {
+  id: string;
+  nameUz: string;
+  nameRu: string;
+  nameEn: string | null;
+  parentId: string | null;
+}
+
+export interface MeasurementUnitDto {
+  id: string;
+  code: string;
+  nameUz: string;
+  nameRu: string;
+  nameEn: string | null;
+  isWeightBased: boolean;
+}
+
 export interface EmployeeSummaryDto {
   id: string;
   userId: string;
@@ -113,6 +139,36 @@ export class CoreApiService {
 
   deleteOrgType(id: string): Observable<void> {
     return this.api.delete<void>('core', `org-types/${id}`);
+  }
+
+  // ── Specializations ─────────────────────────────────────────────────────────
+  getSpecializations(): Observable<SpecializationDto[]> {
+    return this.api.get<SpecializationDto[]>('core', 'specializations');
+  }
+
+  createSpecialization(req: { code: string; nameUz: string; nameRu: string; nameEn?: string; nameUzKiril?: string; }): Observable<{ specializationId: string }> {
+    return this.api.post<{ specializationId: string }>('core', 'specializations', req);
+  }
+
+  updateSpecialization(id: string, req: { code: string; nameUz: string; nameRu: string; nameEn?: string; nameUzKiril?: string; }): Observable<void> {
+    return this.api.put<void>('core', `specializations/${id}`, req);
+  }
+
+  deleteSpecialization(id: string): Observable<void> {
+    return this.api.delete<void>('core', `specializations/${id}`);
+  }
+
+  // ── Catalog references ───────────────────────────────────────────────────────
+  getCategories(): Observable<CategoryDto[]> {
+    return this.api.get<CategoryDto[]>('catalog', 'categories');
+  }
+
+  getMeasurementUnits(): Observable<MeasurementUnitDto[]> {
+    return this.api.get<MeasurementUnitDto[]>('catalog', 'measurement-units');
+  }
+
+  createMeasurementUnit(req: { code: string; nameUz: string; nameRu: string; nameEn?: string; isWeightBased?: boolean; }): Observable<{ id: string }> {
+    return this.api.post<{ id: string }>('catalog', 'measurement-units', req);
   }
 
   // ── Employees ──────────────────────────────────────────────────────────────

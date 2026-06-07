@@ -1,0 +1,61 @@
+<p-toast />
+
+<div class="page">
+  <div class="page-header">
+    <div>
+      <h1>Tashkilot turlari</h1>
+      <p>Tashkilot turlarini (do'kon, ombor va h.k.) boshqarish.</p>
+    </div>
+    <button pButton type="button" label="Tashkilot turi qo'shish" icon="pi pi-plus" (click)="openCreate()"></button>
+  </div>
+
+  <p-table [value]="organizationTypes()" [loading]="loading()" styleClass="p-datatable-sm">
+    <ng-template pTemplate="header">
+      <tr>
+        <th>Kod</th>
+        <th>Nom UZ</th>
+        <th>Nom RU</th>
+        <th>Icon</th>
+        <th style="width:170px">Amallar</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-item>
+      <tr>
+        <td><code>{{ item.code }}</code></td>
+        <td>{{ item.nameUz }}</td>
+        <td>{{ item.nameRu }}</td>
+        <td>{{ item.icon ?? '—' }}</td>
+        <td class="table-actions">
+          <button pButton type="button" icon="pi pi-pencil" [text]="true" severity="secondary" (click)="openEdit(item)"></button>
+          <button pButton type="button" icon="pi pi-trash" [text]="true" severity="danger" (click)="delete(item)"></button>
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage">
+      <tr><td colspan="5" class="empty-msg">Tashkilot turi topilmadi</td></tr>
+    </ng-template>
+  </p-table>
+</div>
+
+<p-dialog header="Tashkilot turi" [visible]="dialogVisible()" (visibleChange)="dialogVisible.set($event)" [modal]="true" [draggable]="false" [style]="{ width: '520px' }">
+  <form [formGroup]="form" class="dialog-form">
+    <label>Kod</label>
+    <input pInputText formControlName="code" placeholder="GROCERY" [readonly]="editMode()" />
+
+    <label>Nom UZ</label>
+    <input pInputText formControlName="nameUz" placeholder="Oziq-ovqat do'koni" />
+
+    <label>Nom RU</label>
+    <input pInputText formControlName="nameRu" placeholder="Продуктовый магазин" />
+
+    <label>Nom EN</label>
+    <input pInputText formControlName="nameEn" placeholder="Grocery Store" />
+
+    <label>Icon</label>
+    <input pInputText formControlName="icon" placeholder="pi-shopping-basket" />
+  </form>
+  <ng-template pTemplate="footer">
+    <button pButton type="button" label="Bekor qilish" [text]="true" severity="secondary" (click)="dialogVisible.set(false)"></button>
+    <button pButton type="button" label="Saqlash" [disabled]="form.invalid || saving()" (click)="save()"></button>
+  </ng-template>
+</p-dialog>

@@ -41,6 +41,8 @@
           <div class="action-btns">
             <p-button icon="pi pi-eye" [rounded]="true" [text]="true" severity="info"
                       (onClick)="openDetail(emp)" title="Ko'rish" size="small" />
+            <p-button icon="pi pi-user-edit" [rounded]="true" [text]="true" severity="warn"
+                      (onClick)="openAccountSettings(emp)" title="Hisob sozlamalari" size="small" />
             <p-button icon="pi pi-briefcase" [rounded]="true" [text]="true" severity="success"
                       (onClick)="openHire(emp)" title="Ishga qabul" size="small" />
             <p-button icon="pi pi-sign-out" [rounded]="true" [text]="true"
@@ -162,5 +164,51 @@
     <p-button label="Bekor" [text]="true" severity="secondary" (onClick)="fireDialogVisible.set(false)" />
     <p-button label="Bo'shatish" icon="pi pi-sign-out" severity="secondary"
               [loading]="saving()" [disabled]="fireForm.invalid" (onClick)="fireEmployee()" />
+  </ng-template>
+</p-dialog>
+
+<!-- Account settings -->
+<p-dialog header="Hisob sozlamalari" [visible]="accountDialogVisible()"
+          (visibleChange)="$event || accountDialogVisible.set(false)"
+          [style]="{width:'420px'}" [modal]="true" [draggable]="false">
+  @if (selectedAccount(); as acc) {
+    <div class="account-info">
+      <div class="detail-row"><span class="dl">Login</span><span class="dv">{{ acc.userName }}</span></div>
+      <div class="detail-row"><span class="dl">Email</span><span class="dv">{{ acc.email }}</span></div>
+      <div class="detail-row">
+        <span class="dl">Holat</span>
+        <p-tag [value]="acc.isActive ? 'Faol' : 'Nofaol'"
+               [severity]="acc.isActive ? 'success' : 'secondary'" />
+      </div>
+    </div>
+
+    <p-button [label]="acc.isActive ? 'Hisobni faolsizlantirish' : 'Hisobni faollashtirish'"
+              [icon]="acc.isActive ? 'pi pi-lock' : 'pi pi-lock-open'"
+              [severity]="acc.isActive ? 'secondary' : 'success'"
+              [text]="true" styleClass="account-toggle-btn" (onClick)="toggleAccountStatus()" />
+
+    <form [formGroup]="accountForm" class="dialog-form account-password-form">
+      <div class="field">
+        <label>Yangi parol</label>
+        <p-password formControlName="newPassword" [feedback]="true" [toggleMask]="true"
+                    styleClass="w-full" inputStyleClass="w-full" placeholder="Kamida 6 ta belgi" />
+      </div>
+      <div class="field">
+        <label>Yangi parolni tasdiqlang</label>
+        <p-password formControlName="confirmPassword" [feedback]="false" [toggleMask]="true"
+                    styleClass="w-full" inputStyleClass="w-full" placeholder="Parolni qayta kiriting" />
+      </div>
+      @if (accountForm.errors?.['passwordMismatch'] && accountForm.get('confirmPassword')?.dirty) {
+        <small class="form-error">Parollar mos kelmadi</small>
+      }
+    </form>
+  } @else {
+    <div class="loading-msg"><i class="pi pi-spin pi-spinner"></i> Yuklanmoqda...</div>
+  }
+  <ng-template pTemplate="footer">
+    <p-button label="Yopish" [text]="true" severity="secondary" (onClick)="accountDialogVisible.set(false)" />
+    <p-button label="Parolni yangilash" icon="pi pi-key" severity="secondary" [loading]="saving()"
+              [disabled]="!selectedAccount() || accountForm.invalid || !accountForm.get('newPassword')?.value"
+              (onClick)="updateAccountPassword()" />
   </ng-template>
 </p-dialog>

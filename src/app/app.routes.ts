@@ -23,16 +23,24 @@ export const routes: Routes = [
         loadComponent: () => import('./features/dashboard/dashboard.component').then(m => m.DashboardComponent),
       },
 
-      // Tashkilotlar
+      // Tashkilot sozlamalari
       {
-        path: 'organizations',
-        loadComponent: () => import('./features/organizations/organizations.component').then(m => m.OrganizationsComponent),
-      },
-
-      // Xodimlar
-      {
-        path: 'employees',
-        loadComponent: () => import('./features/employees/employees.component').then(m => m.EmployeesComponent),
+        path: 'org-settings',
+        children: [
+          { path: '', redirectTo: 'organizations', pathMatch: 'full' },
+          {
+            path: 'organizations',
+            loadComponent: () => import('./features/organizations/organizations.component').then(m => m.OrganizationsComponent),
+          },
+          {
+            path: 'employees',
+            loadComponent: () => import('./features/employees/employees.component').then(m => m.EmployeesComponent),
+          },
+          {
+            path: 'organization-types',
+            loadComponent: () => import('./features/references/organization-types/organization-types.component').then(m => m.OrganizationTypesComponent),
+          },
+        ],
       },
 
       // Katalog
@@ -97,6 +105,26 @@ export const routes: Routes = [
           {
             path: 'roles',
             loadComponent: () => import('./features/settings/roles/roles.component').then(m => m.RolesComponent),
+          },
+        ],
+      },
+
+      // Ma'lumotnoma
+      {
+        path: 'references',
+        children: [
+          { path: '', redirectTo: 'specializations', pathMatch: 'full' },
+          {
+            path: 'specializations',
+            loadComponent: () => import('./features/references/specializations/specializations.component').then(m => m.SpecializationsComponent),
+          },
+          {
+            path: 'categories',
+            loadComponent: () => import('./features/references/categories/categories.component').then(m => m.CategoriesComponent),
+          },
+          {
+            path: 'measurement-units',
+            loadComponent: () => import('./features/references/measurement-units/measurement-units.component').then(m => m.MeasurementUnitsComponent),
           },
         ],
       },

@@ -24,16 +24,13 @@ const NAV_ITEMS: NavItem[] = [
     route: '/app/dashboard',
   },
   {
-    label: 'Tashkilotlar',
+    label: 'Tashkilot sozlamalari',
     icon: 'pi pi-building',
-    route: '/app/organizations',
-    roles: ['SuperAdmin'],
-  },
-  {
-    label: 'Xodimlar',
-    icon: 'pi pi-users',
-    route: '/app/employees',
-    roles: ['SuperAdmin', 'StoreAdmin'],
+    children: [
+      { label: 'Tashkilotlar', icon: 'pi pi-building', route: '/app/org-settings/organizations', roles: ['SuperAdmin'] },
+      { label: 'Xodimlar', icon: 'pi pi-users', route: '/app/org-settings/employees', roles: ['SuperAdmin', 'StoreAdmin'] },
+      { label: 'Tashkilot turlari', icon: 'pi pi-tags', route: '/app/org-settings/organization-types', roles: ['SuperAdmin'] },
+    ],
   },
   {
     label: 'Katalog',
@@ -67,6 +64,16 @@ const NAV_ITEMS: NavItem[] = [
     children: [
       { label: 'Foydalanuvchilar', icon: 'pi pi-users', route: '/app/settings/users', roles: ['SuperAdmin'] },
       { label: 'Rollar', icon: 'pi pi-shield', route: '/app/settings/roles', roles: ['SuperAdmin'] },
+    ],
+  },
+  {
+    label: 'Ma\'lumotnoma',
+    icon: 'pi pi-book',
+    roles: ['SuperAdmin'],
+    children: [
+      { label: 'Mutaxassisliklar', icon: 'pi pi-id-card', route: '/app/references/specializations', roles: ['SuperAdmin'] },
+      { label: 'Kategoriyalar', icon: 'pi pi-sitemap', route: '/app/references/categories', roles: ['SuperAdmin'] },
+      { label: 'O\'lchov birliklari', icon: 'pi pi-percentage', route: '/app/references/measurement-units', roles: ['SuperAdmin'] },
     ],
   },
 ];

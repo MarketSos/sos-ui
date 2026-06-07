@@ -21,3 +21,7 @@
   border: 1px solid #bbf7d0; border-radius: 8px; padding: 0.65rem 1rem; margin-bottom: 1rem;
   i { color: #22c55e; font-size: 1.1rem; }
   &.fire { background: #fff7ed; border-color: #fed7aa; i { color: #f97316; } } }
+.account-info { margin-bottom: 0.75rem; }
+.account-toggle-btn { width: 100%; justify-content: center; margin-bottom: 1rem; }
+.account-password-form { border-top: 1px solid #f1f5f9; padding-top: 1rem; }
+.form-error { color: #ef4444; font-size: 0.8rem; }
