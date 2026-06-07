@@ -66,12 +66,15 @@ export class ProductsComponent implements OnInit {
     barcode:     ['', [Validators.required]],
   });
 
+  serialLoading = signal(false);
+
   skuForm = this.fb.group({
     serialNumber:      ['', Validators.required],
     measurementUnitId: ['', Validators.required],
     amount:            [1,  [Validators.required, Validators.min(0.001)]],
     costPrice:         [0,  [Validators.required, Validators.min(0)]],
     salePrice:         [0,  [Validators.required, Validators.min(0)]],
+    expirationDate:    [''],
   });
 
   ngOnInit(): void {
@@ -148,11 +151,25 @@ export class ProductsComponent implements OnInit {
   }
 
   // ── SKU ───────────────────────────────────────────────────────────────────
+  fetchNextSerial(): void {
+    const product = this.selectedProduct();
+    if (!product) return;
+    this.serialLoading.set(true);
+    this.svc.getNextSerial(product.id).pipe(catchError(() => of(null))).subscribe(res => {
+      this.serialLoading.set(false);
+      if (res) this.skuForm.patchValue({ serialNumber: res.serialNumber });
+    });
+  }
+
   openSkus(product: Product): void {
     this.selectedProduct.set(product);
     this.skuLoading.set(true);
     this.skuDialogVisible.set(true);
     this.skuForm.reset({ amount: 1, costPrice: 0, salePrice: 0 });
+    // Avtomatik keyingi serial raqamni olish
+    this.svc.getNextSerial(product.id).pipe(catchError(() => of(null))).subscribe(res => {
+      if (res) this.skuForm.patchValue({ serialNumber: res.serialNumber });
+    });
     this.svc.getSkus(product.id).pipe(catchError(() => of([]))).subscribe(data => {
       this.skus.set(data);
       this.skuLoading.set(false);
@@ -169,6 +186,7 @@ export class ProductsComponent implements OnInit {
       amount:            v.amount!,
       costPrice:         v.costPrice!,
       salePrice:         v.salePrice!,
+      expirationDate:    v.expirationDate || undefined,
     };
     this.svc.createSku(this.selectedProduct()!.id, req)
       .pipe(catchError(err => {

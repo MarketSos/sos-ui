@@ -218,8 +218,23 @@
         <form [formGroup]="skuForm" class="dialog-form">
           <div class="form-row">
             <div class="field">
-              <label>Serial raqam <span class="req">*</span></label>
-              <input pInputText formControlName="serialNumber" placeholder="BATCH-001" class="w-full" />
+              <label>Partiya raqami <span class="req">*</span></label>
+              <div class="input-with-btn">
+                <input pInputText formControlName="serialNumber" placeholder="BATCH-202506-001" class="w-full" />
+                <p-button
+                  icon="pi pi-refresh"
+                  [rounded]="true" [text]="true"
+                  severity="secondary"
+                  [loading]="serialLoading()"
+                  (onClick)="fetchNextSerial()"
+                  title="Keyingi raqamni avtomatik olish"
+                  size="small"
+                />
+              </div>
+              <small class="hint">
+                <i class="pi pi-info-circle"></i>
+                Bo'sh qoldirsangiz yoki <i class="pi pi-refresh"></i> bosib avtomatik raqam oling
+              </small>
             </div>
             <div class="field">
               <label>O'lchov birligi <span class="req">*</span></label>
@@ -247,6 +262,10 @@
             <div class="field">
               <label>Sotuv narx (so'm) <span class="req">*</span></label>
               <p-inputnumber formControlName="salePrice" [min]="0" mode="decimal" styleClass="w-full" />
+            </div>
+            <div class="field">
+              <label>Amal qilish muddati</label>
+              <input pInputText formControlName="expirationDate" type="date" class="w-full" />
             </div>
           </div>
           <div style="display:flex; justify-content:flex-end; margin-top:0.5rem">

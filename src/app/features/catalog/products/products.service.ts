@@ -37,4 +37,8 @@ export class ProductsService {
   getCategories(): Observable<Category[]> {
     return this.api.get<Category[]>('catalog', 'categories');
   }
+
+  getNextSerial(productId: string): Observable<{ serialNumber: string }> {
+    return this.api.get<{ serialNumber: string }>('catalog', `products/${productId}/skus/next-serial`);
+  }
 }

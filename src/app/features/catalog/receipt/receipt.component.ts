@@ -74,6 +74,8 @@ export class StockReceiptComponent implements OnInit {
     barcode: ['', [Validators.required]],
   });
 
+  serialLoading = signal(false);
+
   skuForm: FormGroup = this.fb.group({
     serialNumber:      ['', Validators.required],
     measurementUnitId: ['', Validators.required],
@@ -128,11 +130,24 @@ export class StockReceiptComponent implements OnInit {
   }
 
   // ── Step transitions ──────────────────────────────────────────────────────
+  fetchNextSerial(): void {
+    const product = this.foundProduct();
+    if (!product) return;
+    this.serialLoading.set(true);
+    this.svc.getNextSerial(product.id).pipe(catchError(() => of(null))).subscribe(res => {
+      this.serialLoading.set(false);
+      if (res) this.skuForm.patchValue({ serialNumber: res.serialNumber });
+    });
+  }
+
   goToSku(product: Product): void {
     this.foundProduct.set(product);
     this.skuForm.reset({ amount: 1, costPrice: 0, salePrice: 0 });
-    this.skuForm.patchValue({ serialNumber: `BATCH-${Date.now()}` });
     this.step.set('sku');
+    // Avtomatik serial raqam olish
+    this.svc.getNextSerial(product.id).pipe(catchError(() => of(null))).subscribe(res => {
+      if (res) this.skuForm.patchValue({ serialNumber: res.serialNumber });
+    });
   }
 
   goToNewProduct(barcode = ''): void {

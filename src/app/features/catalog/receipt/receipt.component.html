@@ -90,7 +90,18 @@
             <div class="form-row">
               <div class="field">
                 <label>Partiya raqami <span class="req">*</span></label>
-                <input pInputText formControlName="serialNumber" placeholder="BATCH-001" class="w-full" />
+                <div class="input-with-btn">
+                  <input pInputText formControlName="serialNumber" placeholder="BATCH-202506-001" class="w-full" />
+                  <p-button
+                    icon="pi pi-refresh"
+                    [rounded]="true" [text]="true"
+                    severity="secondary"
+                    [loading]="serialLoading()"
+                    (onClick)="fetchNextSerial()"
+                    title="Avtomatik raqam"
+                    size="small"
+                  />
+                </div>
               </div>
               <div class="field">
                 <label>O'lchov birligi <span class="req">*</span></label>
