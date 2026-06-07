@@ -32,6 +32,7 @@ export class AuthEffects {
         tap(({ response }) => {
           this.tokenService.setToken(response.accessToken);
           this.tokenService.setRefreshToken(response.refreshToken);
+          this.tokenService.setUser(response.user);
           this.router.navigate(['/app/dashboard']);
         })
       ),
@@ -59,6 +60,7 @@ export class AuthEffects {
         tap(({ response }) => {
           this.tokenService.setToken(response.accessToken);
           this.tokenService.setRefreshToken(response.refreshToken);
+          this.tokenService.setUser(response.user);
           this.router.navigate(['/app/dashboard']);
         })
       ),

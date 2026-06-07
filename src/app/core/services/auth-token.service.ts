@@ -1,7 +1,9 @@
 import { Injectable } from '@angular/core';
+import { User } from '../../features/auth/store/auth.model';
 
-const TOKEN_KEY = 'sos_access_token';
+const TOKEN_KEY   = 'sos_access_token';
 const REFRESH_KEY = 'sos_refresh_token';
+const USER_KEY    = 'sos_user';
 
 @Injectable({ providedIn: 'root' })
 export class AuthTokenService {
@@ -21,9 +23,23 @@ export class AuthTokenService {
     localStorage.setItem(REFRESH_KEY, token);
   }
 
+  setUser(user: User): void {
+    localStorage.setItem(USER_KEY, JSON.stringify(user));
+  }
+
+  getUser(): User | null {
+    try {
+      const raw = localStorage.getItem(USER_KEY);
+      return raw ? (JSON.parse(raw) as User) : null;
+    } catch {
+      return null;
+    }
+  }
+
   clearToken(): void {
     localStorage.removeItem(TOKEN_KEY);
     localStorage.removeItem(REFRESH_KEY);
+    localStorage.removeItem(USER_KEY);
   }
 
   isLoggedIn(): boolean {
