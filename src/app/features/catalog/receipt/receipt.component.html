@@ -1,0 +1,298 @@
+<p-toast />
+
+<div class="receipt-page">
+
+  <!-- ── HEADER ── -->
+  <div class="page-header">
+    <div>
+      <h1>Tovar qabul qilish</h1>
+      <p>Barcode skanerlang yoki mahsulot nomini kiriting</p>
+    </div>
+    <div class="header-stats">
+      <div class="stat-chip">
+        <i class="pi pi-list"></i>
+        <span>{{ totalLines() }} qator</span>
+      </div>
+      <div class="stat-chip cost">
+        <i class="pi pi-wallet"></i>
+        <span>{{ formatPrice(totalCost()) }} so'm</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="receipt-body">
+
+    <!-- ── LEFT: Add item panel ── -->
+    <div class="add-panel">
+
+      <!-- ═══ STEP: SEARCH ═══ -->
+      @if (step() === 'search') {
+        <div class="panel-card">
+          <div class="panel-title">
+            <i class="pi pi-search"></i>
+            Mahsulot qidirish
+          </div>
+
+          <div class="search-row">
+            <p-iconfield class="flex-1">
+              <p-inputicon styleClass="pi pi-barcode" />
+              <input
+                pInputText
+                [(ngModel)]="barcodeQuery"
+                (keydown)="onBarcodeKeydown($event)"
+                placeholder="Barcode yoki nom..."
+                class="w-full"
+                autofocus
+              />
+            </p-iconfield>
+            <p-button
+              label="Qidirish"
+              icon="pi pi-search"
+              [loading]="searching()"
+              (onClick)="searchByBarcode()"
+            />
+          </div>
+
+          <div class="search-hint">
+            <i class="pi pi-info-circle"></i>
+            Enter yoki "Qidirish" tugmasini bosing. Mahsulot topilmasa yangi yaratish taklif qilinadi.
+          </div>
+
+          @if (lines().length === 0) {
+            <div class="empty-lines">
+              <i class="pi pi-truck"></i>
+              <p>Hali mahsulot qo'shilmagan</p>
+            </div>
+          }
+        </div>
+      }
+
+      <!-- ═══ STEP: SKU ═══ -->
+      @if (step() === 'sku') {
+        <div class="panel-card">
+          <div class="panel-title">
+            <i class="pi pi-box"></i>
+            Kirim ma'lumotlari
+          </div>
+
+          <!-- Product info -->
+          <div class="product-badge">
+            <div class="product-badge-icon">
+              <i class="pi pi-tag"></i>
+            </div>
+            <div>
+              <div class="product-badge-name">{{ foundProduct()?.nameUz }}</div>
+              <code class="product-badge-barcode">{{ foundProduct()?.barcode }}</code>
+            </div>
+          </div>
+
+          <form [formGroup]="skuForm" class="sku-form">
+            <div class="form-row">
+              <div class="field">
+                <label>Partiya raqami <span class="req">*</span></label>
+                <input pInputText formControlName="serialNumber" placeholder="BATCH-001" class="w-full" />
+              </div>
+              <div class="field">
+                <label>O'lchov birligi <span class="req">*</span></label>
+                <p-select
+                  formControlName="measurementUnitId"
+                  [options]="units()"
+                  optionLabel="nameUz"
+                  optionValue="id"
+                  placeholder="Tanlang"
+                  styleClass="w-full"
+                />
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="field">
+                <label>Miqdor <span class="req">*</span></label>
+                <p-inputnumber
+                  formControlName="amount"
+                  [min]="0.001"
+                  [minFractionDigits]="0"
+                  [maxFractionDigits]="3"
+                  styleClass="w-full"
+                />
+              </div>
+              <div class="field">
+                <label>Tan narx (so'm) <span class="req">*</span></label>
+                <p-inputnumber
+                  formControlName="costPrice"
+                  [min]="0"
+                  mode="decimal"
+                  styleClass="w-full"
+                />
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="field">
+                <label>Sotuv narx (so'm) <span class="req">*</span></label>
+                <p-inputnumber
+                  formControlName="salePrice"
+                  [min]="0"
+                  mode="decimal"
+                  styleClass="w-full"
+                />
+              </div>
+              <div class="field">
+                <label>Muddat tugash sanasi</label>
+                <input pInputText formControlName="expirationDate" type="date" class="w-full" />
+              </div>
+            </div>
+          </form>
+
+          <div class="panel-actions">
+            <p-button
+              label="Orqaga"
+              icon="pi pi-arrow-left"
+              [text]="true"
+              severity="secondary"
+              (onClick)="backToSearch()"
+            />
+            <p-button
+              label="Ro'yxatga qo'shish"
+              icon="pi pi-plus"
+              [disabled]="skuForm.invalid"
+              (onClick)="addLine()"
+            />
+          </div>
+        </div>
+      }
+
+      <!-- ═══ STEP: NEW PRODUCT ═══ -->
+      @if (step() === 'new-product') {
+        <div class="panel-card">
+          <p-message
+            severity="warn"
+            text="Mahsulot topilmadi. Quyida yangi mahsulot yarating, so'ng kirim ma'lumotlarini kiriting."
+            styleClass="w-full mb-3"
+          />
+
+          <div class="panel-title">
+            <i class="pi pi-plus-circle"></i>
+            Yangi mahsulot yaratish
+          </div>
+
+          <form [formGroup]="newProductForm" class="sku-form">
+            <div class="form-row">
+              <div class="field">
+                <label>Nomi (UZ) <span class="req">*</span></label>
+                <input pInputText formControlName="nameUz" placeholder="O'zbekcha nom" class="w-full" />
+              </div>
+              <div class="field">
+                <label>Nomi (RU) <span class="req">*</span></label>
+                <input pInputText formControlName="nameRu" placeholder="Русское название" class="w-full" />
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="field">
+                <label>Barcode <span class="req">*</span></label>
+                <input pInputText formControlName="barcode" placeholder="EAN-13 yoki ichki kod" class="w-full" />
+              </div>
+              <div class="field">
+                <label>Kategoriya <span class="req">*</span></label>
+                <p-autocomplete
+                  [ngModel]="selectedCategory()"
+                  (ngModelChange)="selectedCategory.set($event)"
+                  [ngModelOptions]="{ standalone: true }"
+                  [suggestions]="filteredCategories()"
+                  (completeMethod)="filterCategories($event)"
+                  optionLabel="nameUz"
+                  placeholder="Kategoriya..."
+                  [forceSelection]="true"
+                  [dropdown]="true"
+                  styleClass="w-full"
+                  inputStyleClass="w-full"
+                >
+                  <ng-template let-cat pTemplate="item">
+                    <div>
+                      <span>{{ cat.nameUz }}</span>
+                      <small style="color:#94a3b8; margin-left:.5rem">{{ cat.nameRu }}</small>
+                    </div>
+                  </ng-template>
+                </p-autocomplete>
+              </div>
+            </div>
+          </form>
+
+          <div class="panel-actions">
+            <p-button
+              label="Orqaga"
+              icon="pi pi-arrow-left"
+              [text]="true"
+              severity="secondary"
+              (onClick)="backToSearch()"
+            />
+            <p-button
+              label="Yaratib, kirim qilish"
+              icon="pi pi-arrow-right"
+              [loading]="saving()"
+              [disabled]="newProductForm.invalid || !selectedCategory()"
+              (onClick)="createProductAndContinue()"
+            />
+          </div>
+        </div>
+      }
+    </div>
+
+    <!-- ── RIGHT: Receipt lines ── -->
+    <div class="lines-panel">
+      <div class="lines-header">
+        <span class="lines-title">Qabul ro'yxati</span>
+        @if (pendingLines() > 0) {
+          <p-button
+            [label]="'Hammasini saqlash (' + pendingLines() + ')'"
+            icon="pi pi-check"
+            [loading]="submitting()"
+            (onClick)="submitAll()"
+          />
+        }
+      </div>
+
+      @if (lines().length === 0) {
+        <div class="lines-empty">
+          <i class="pi pi-inbox"></i>
+          <p>Mahsulotlar qo'shilgach bu yerda ko'rinadi</p>
+        </div>
+      } @else {
+        <div class="lines-list">
+          @for (line of lines(); track $index; let i = $index) {
+            <div class="line-card" [class.saved]="line.saved">
+              <div class="line-left">
+                <div class="line-name">{{ line.product.nameUz }}</div>
+                <div class="line-meta">
+                  <code>{{ line.product.barcode }}</code>
+                  <span>· {{ line.serialNumber }}</span>
+                  <span>· {{ line.amount }} {{ line.measurementUnit.code }}</span>
+                </div>
+              </div>
+              <div class="line-right">
+                <div class="line-prices">
+                  <span class="cost-price">{{ formatPrice(line.costPrice) }}</span>
+                  <span class="sale-price">{{ formatPrice(line.salePrice) }} so'm</span>
+                </div>
+                @if (line.saved) {
+                  <i class="pi pi-check-circle saved-icon"></i>
+                } @else {
+                  <p-button
+                    icon="pi pi-trash"
+                    [rounded]="true"
+                    [text]="true"
+                    severity="danger"
+                    (onClick)="removeLine(i)"
+                    size="small"
+                  />
+                }
+              </div>
+            </div>
+          }
+        </div>
+      }
+    </div>
+
+  </div>
+</div>

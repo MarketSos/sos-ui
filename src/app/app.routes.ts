@@ -52,6 +52,10 @@ export const routes: Routes = [
             path: 'pricing',
             loadComponent: () => import('./features/catalog/pricing/pricing.component').then(m => m.PricingComponent),
           },
+          {
+            path: 'receipt',
+            loadComponent: () => import('./features/catalog/receipt/receipt.component').then(m => m.StockReceiptComponent),
+          },
         ],
       },
 

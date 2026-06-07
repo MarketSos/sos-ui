@@ -39,9 +39,10 @@ const NAV_ITEMS: NavItem[] = [
     label: 'Katalog',
     icon: 'pi pi-box',
     children: [
-      { label: 'Mahsulotlar', icon: 'pi pi-tag', route: '/app/catalog/products' },
-      { label: 'Ombor', icon: 'pi pi-warehouse', route: '/app/catalog/stock' },
-      { label: 'Narxlash', icon: 'pi pi-percentage', route: '/app/catalog/pricing', roles: ['SuperAdmin', 'StoreAdmin'] },
+      { label: 'Mahsulotlar',   icon: 'pi pi-tag',        route: '/app/catalog/products' },
+      { label: 'Qabul qilish', icon: 'pi pi-truck',       route: '/app/catalog/receipt', roles: ['SuperAdmin', 'StoreAdmin'] },
+      { label: 'Ombor',        icon: 'pi pi-warehouse',   route: '/app/catalog/stock' },
+      { label: 'Narxlash',     icon: 'pi pi-percentage',  route: '/app/catalog/pricing', roles: ['SuperAdmin', 'StoreAdmin'] },
     ],
   },
   {
