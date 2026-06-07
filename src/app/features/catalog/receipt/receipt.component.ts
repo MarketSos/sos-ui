@@ -17,6 +17,12 @@ import { InputIconModule } from 'primeng/inputicon';
 import { MessageModule } from 'primeng/message';
 import { MessageService } from 'primeng/api';
 import { catchError, of } from 'rxjs';
+
+function localSerial(count: number): string {
+  const d  = new Date();
+  const ym = `${d.getFullYear()}${String(d.getMonth() + 1).padStart(2, '0')}`;
+  return `BATCH-${ym}-${String(count).padStart(3, '0')}`;
+}
 import { ProductsService } from '../products/products.service';
 import { Product, Category, MeasurementUnit } from '../products/products.models';
 
@@ -134,9 +140,11 @@ export class StockReceiptComponent implements OnInit {
     const product = this.foundProduct();
     if (!product) return;
     this.serialLoading.set(true);
-    this.svc.getNextSerial(product.id).pipe(catchError(() => of(null))).subscribe(res => {
+    this.svc.getNextSerial(product.id).pipe(
+      catchError(() => of({ serialNumber: localSerial(this.lines().length + 1) }))
+    ).subscribe(res => {
       this.serialLoading.set(false);
-      if (res) this.skuForm.patchValue({ serialNumber: res.serialNumber });
+      this.skuForm.patchValue({ serialNumber: res.serialNumber });
     });
   }
 
@@ -144,9 +152,10 @@ export class StockReceiptComponent implements OnInit {
     this.foundProduct.set(product);
     this.skuForm.reset({ amount: 1, costPrice: 0, salePrice: 0 });
     this.step.set('sku');
-    // Avtomatik serial raqam olish
-    this.svc.getNextSerial(product.id).pipe(catchError(() => of(null))).subscribe(res => {
-      if (res) this.skuForm.patchValue({ serialNumber: res.serialNumber });
+    this.svc.getNextSerial(product.id).pipe(
+      catchError(() => of({ serialNumber: localSerial(this.lines().length + 1) }))
+    ).subscribe(res => {
+      this.skuForm.patchValue({ serialNumber: res.serialNumber });
     });
   }
 

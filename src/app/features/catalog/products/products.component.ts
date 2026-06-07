@@ -17,7 +17,7 @@ import { TabsModule } from 'primeng/tabs';
 import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
 import { ConfirmationService, MessageService } from 'primeng/api';
-import { catchError, of, debounceTime, distinctUntilChanged, Subject, switchMap } from 'rxjs';
+import { catchError, of, forkJoin, debounceTime, distinctUntilChanged, Subject, switchMap } from 'rxjs';
 import { ProductsService } from './products.service';
 import { Product, Sku, MeasurementUnit, Category, CreateSkuRequest } from './products.models';
 
@@ -150,14 +150,22 @@ export class ProductsComponent implements OnInit {
     });
   }
 
+  private localSerial(count: number): string {
+    const d  = new Date();
+    const ym = `${d.getFullYear()}${String(d.getMonth() + 1).padStart(2, '0')}`;
+    return `BATCH-${ym}-${String(count).padStart(3, '0')}`;
+  }
+
   // ── SKU ───────────────────────────────────────────────────────────────────
   fetchNextSerial(): void {
     const product = this.selectedProduct();
     if (!product) return;
     this.serialLoading.set(true);
-    this.svc.getNextSerial(product.id).pipe(catchError(() => of(null))).subscribe(res => {
+    this.svc.getNextSerial(product.id).pipe(
+      catchError(() => of({ serialNumber: this.localSerial(this.skus().length + 1) }))
+    ).subscribe(res => {
       this.serialLoading.set(false);
-      if (res) this.skuForm.patchValue({ serialNumber: res.serialNumber });
+      this.skuForm.patchValue({ serialNumber: res.serialNumber });
     });
   }
 
@@ -166,13 +174,15 @@ export class ProductsComponent implements OnInit {
     this.skuLoading.set(true);
     this.skuDialogVisible.set(true);
     this.skuForm.reset({ amount: 1, costPrice: 0, salePrice: 0 });
-    // Avtomatik keyingi serial raqamni olish
-    this.svc.getNextSerial(product.id).pipe(catchError(() => of(null))).subscribe(res => {
-      if (res) this.skuForm.patchValue({ serialNumber: res.serialNumber });
-    });
-    this.svc.getSkus(product.id).pipe(catchError(() => of([]))).subscribe(data => {
-      this.skus.set(data);
+
+    forkJoin({
+      skus:   this.svc.getSkus(product.id).pipe(catchError(() => of([]))),
+      serial: this.svc.getNextSerial(product.id).pipe(catchError(() => of(null))),
+    }).subscribe(({ skus, serial }) => {
+      this.skus.set(skus);
       this.skuLoading.set(false);
+      const serialNum = serial?.serialNumber ?? this.localSerial(skus.length + 1);
+      this.skuForm.patchValue({ serialNumber: serialNum });
     });
   }
 
