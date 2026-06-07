@@ -35,7 +35,7 @@ export class LoginComponent implements OnInit {
   private tokenService = inject(AuthTokenService);
 
   form = this.fb.group({
-    email: ['', [Validators.required, Validators.email]],
+    userName: ['', [Validators.required, Validators.minLength(3)]],
     password: ['', [Validators.required, Validators.minLength(6)]],
   });
 

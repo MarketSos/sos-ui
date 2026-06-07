@@ -1,13 +1,20 @@
 export interface User {
   id: string;
+  userName: string;
   email: string;
   role: string;
-  username: string;
 }
 
 export interface LoginRequest {
+  userName: string;
+  password: string;
+}
+
+export interface RegisterRequest {
+  userName: string;
   email: string;
   password: string;
+  roleIds: string[];
 }
 
 export interface LoginResponse {
@@ -16,12 +23,6 @@ export interface LoginResponse {
   expiresAt: string;
   role: string;
   user: User;
-}
-
-export interface RegisterRequest {
-  username: string;
-  email: string;
-  password: string;
 }
 
 export interface AuthState {

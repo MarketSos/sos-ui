@@ -42,7 +42,7 @@ export class RegisterComponent implements OnInit {
 
   form = this.fb.group(
     {
-      username: ['', [Validators.required, Validators.minLength(3)]],
+      userName: ['', [Validators.required, Validators.minLength(3)]],
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]],
       confirmPassword: ['', [Validators.required]],
@@ -61,9 +61,9 @@ export class RegisterComponent implements OnInit {
 
   onSubmit(): void {
     if (this.form.valid) {
-      const { username, email, password } = this.form.getRawValue();
+      const { userName, email, password } = this.form.getRawValue();
       this.store.dispatch(
-        AuthActions.register({ request: { username: username!, email: email!, password: password! } })
+        AuthActions.register({ request: { userName: userName!, email: email!, password: password!, roleIds: [] } })
       );
     }
   }

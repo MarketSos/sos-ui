@@ -13,18 +13,17 @@
       }
 
       <div class="field">
-        <label for="email">Email</label>
+        <label for="userName">Login</label>
         <input
           pInputText
-          id="email"
-          type="email"
-          formControlName="email"
-          placeholder="email@example.com"
+          id="userName"
+          formControlName="userName"
+          placeholder="foydalanuvchi_nomi"
           class="w-full"
-          autocomplete="email"
+          autocomplete="username"
         />
-        @if (form.get('email')?.invalid && form.get('email')?.touched) {
-          <small class="error-text">To'g'ri email kiriting</small>
+        @if (form.get('userName')?.invalid && form.get('userName')?.touched) {
+          <small class="error-text">Kamida 3 ta belgi</small>
         }
       </div>
 

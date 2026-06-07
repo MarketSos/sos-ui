@@ -13,16 +13,16 @@
       }
 
       <div class="field">
-        <label for="username">Foydalanuvchi nomi</label>
+        <label for="userName">Login (foydalanuvchi nomi)</label>
         <input
           pInputText
-          id="username"
-          formControlName="username"
-          placeholder="username"
+          id="userName"
+          formControlName="userName"
+          placeholder="foydalanuvchi_nomi"
           class="w-full"
           autocomplete="username"
         />
-        @if (form.get('username')?.invalid && form.get('username')?.touched) {
+        @if (form.get('userName')?.invalid && form.get('userName')?.touched) {
           <small class="error-text">Kamida 3 ta belgi</small>
         }
       </div>
