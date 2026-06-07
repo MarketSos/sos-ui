@@ -1,0 +1,64 @@
+<p-toast />
+
+<div class="page">
+  <div class="page-header">
+    <div>
+      <h1>Rollar</h1>
+      <p>Tizim rollari va ruxsatlar</p>
+    </div>
+  </div>
+
+  <p-table [value]="roles()" [loading]="loading()" styleClass="p-datatable-sm">
+    <ng-template pTemplate="header">
+      <tr>
+        <th>Rol nomi</th>
+        <th>UZ nomi</th>
+        <th style="width:130px">Ruxsatlar soni</th>
+        <th style="width:100px">Amallar</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-role>
+      <tr>
+        <td><code class="role-code">{{ role.name }}</code></td>
+        <td>{{ role.nameUz }}</td>
+        <td>
+          <p-tag [value]="role.permissionCount + ' ta'" severity="info" />
+        </td>
+        <td>
+          <p-button icon="pi pi-eye" [rounded]="true" [text]="true" severity="secondary"
+                    (onClick)="openDetail(role)" title="Ruxsatlarni ko'rish" size="small" />
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage">
+      <tr><td colspan="4" class="empty-msg">
+        <i class="pi pi-shield"></i><span>Rollar topilmadi</span>
+      </td></tr>
+    </ng-template>
+  </p-table>
+</div>
+
+<!-- Permission detail dialog -->
+<p-dialog [header]="'Ruxsatlar — ' + (selectedRole()?.nameUz ?? '')"
+          [visible]="detailVisible()"
+          (visibleChange)="$event || detailVisible.set(false)"
+          [style]="{width:'560px'}" [modal]="true" [draggable]="false">
+  @if (detailLoading()) {
+    <div class="loading-msg"><i class="pi pi-spin pi-spinner"></i> Yuklanmoqda...</div>
+  } @else {
+    <div class="permissions-grid">
+      @for (perm of (selectedRole()?.permissions ?? []); track perm) {
+        <div class="perm-chip">
+          <i class="pi pi-check-circle"></i>
+          <span>{{ perm }}</span>
+        </div>
+      }
+      @if ((selectedRole()?.permissions?.length ?? 0) === 0) {
+        <p class="no-perms">Ruxsatlar yo'q</p>
+      }
+    </div>
+  }
+  <ng-template pTemplate="footer">
+    <p-button label="Yopish" [text]="true" severity="secondary" (onClick)="detailVisible.set(false)" />
+  </ng-template>
+</p-dialog>

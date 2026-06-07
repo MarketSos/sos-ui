@@ -1,0 +1,166 @@
+<p-toast />
+<p-confirmDialog />
+
+<div class="page">
+  <div class="page-header">
+    <div>
+      <h1>Xodimlar</h1>
+      <p>Tashkilot xodimlari ro'yxati</p>
+    </div>
+    <p-button label="Yangi xodim" icon="pi pi-plus" (onClick)="openCreate()" />
+  </div>
+
+  <p-iconfield>
+    <p-inputicon styleClass="pi pi-search" />
+    <input pInputText [(ngModel)]="searchQuery" placeholder="Ism yoki telefon..." style="width:300px" />
+  </p-iconfield>
+
+  <p-table [value]="filteredEmployees" [loading]="loading()" [paginator]="true" [rows]="15"
+           styleClass="p-datatable-sm">
+    <ng-template pTemplate="header">
+      <tr>
+        <th pSortableColumn="fullName">F.I.SH <p-sortIcon field="fullName" /></th>
+        <th>Telefon</th>
+        <th>Mutaxassislik</th>
+        <th>Lavozim</th>
+        <th style="width:100px">Holat</th>
+        <th style="width:180px">Amallar</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-emp>
+      <tr>
+        <td><strong>{{ emp.fullName }}</strong></td>
+        <td>{{ emp.phone ?? '—' }}</td>
+        <td>{{ emp.specializationName ?? '—' }}</td>
+        <td>{{ emp.employeeRankName ?? '—' }}</td>
+        <td>
+          <p-tag [value]="emp.isActive ? 'Faol' : 'Nofaol'"
+                 [severity]="emp.isActive ? 'success' : 'secondary'" />
+        </td>
+        <td>
+          <div class="action-btns">
+            <p-button icon="pi pi-eye" [rounded]="true" [text]="true" severity="info"
+                      (onClick)="openDetail(emp)" title="Ko'rish" size="small" />
+            <p-button icon="pi pi-briefcase" [rounded]="true" [text]="true" severity="success"
+                      (onClick)="openHire(emp)" title="Ishga qabul" size="small" />
+            <p-button icon="pi pi-sign-out" [rounded]="true" [text]="true"
+                      severity="secondary"
+                      (onClick)="openFire(emp)" title="Ishdan bo'shatish" size="small" />
+            <p-button icon="pi pi-trash" [rounded]="true" [text]="true" severity="danger"
+                      (onClick)="confirmDelete(emp)" title="O'chirish" size="small" />
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage">
+      <tr><td colspan="6" class="empty-msg">
+        <i class="pi pi-users"></i><span>Xodimlar topilmadi</span>
+      </td></tr>
+    </ng-template>
+  </p-table>
+</div>
+
+<!-- Create -->
+<p-dialog header="Yangi xodim" [visible]="createDialogVisible()"
+          (visibleChange)="$event || createDialogVisible.set(false)"
+          [style]="{width:'500px'}" [modal]="true" [draggable]="false">
+  <form [formGroup]="createForm" class="dialog-form">
+    <div class="field">
+      <label>Foydalanuvchi <span class="req">*</span></label>
+      <p-select formControlName="userId" [options]="availableUsers"
+                optionLabel="userName" optionValue="id"
+                placeholder="Foydalanuvchini tanlang" styleClass="w-full" filter="true" />
+    </div>
+    <div class="form-row">
+      <div class="field">
+        <label>Ism <span class="req">*</span></label>
+        <input pInputText formControlName="firstName" placeholder="Ism" class="w-full" />
+      </div>
+      <div class="field">
+        <label>Familya <span class="req">*</span></label>
+        <input pInputText formControlName="lastName" placeholder="Familya" class="w-full" />
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="field">
+        <label>Telefon</label>
+        <input pInputText formControlName="phone" placeholder="+998901234567" class="w-full" />
+      </div>
+      <div class="field">
+        <label>Ishga kirish sanasi</label>
+        <input pInputText formControlName="hireDate" type="date" class="w-full" />
+      </div>
+    </div>
+  </form>
+  <ng-template pTemplate="footer">
+    <p-button label="Bekor" [text]="true" severity="secondary" (onClick)="createDialogVisible.set(false)" />
+    <p-button label="Yaratish" icon="pi pi-check" [loading]="saving()"
+              [disabled]="createForm.invalid" (onClick)="createEmployee()" />
+  </ng-template>
+</p-dialog>
+
+<!-- Detail -->
+<p-dialog header="Xodim ma'lumotlari" [visible]="detailDialogVisible()"
+          (visibleChange)="$event || detailDialogVisible.set(false)"
+          [style]="{width:'480px'}" [modal]="true" [draggable]="false">
+  @if (selectedEmployee(); as emp) {
+    <div class="detail-grid">
+      <div class="detail-row"><span class="dl">F.I.SH</span><span class="dv">{{ emp.fullName }}</span></div>
+      <div class="detail-row"><span class="dl">Email</span><span class="dv">{{ emp.email }}</span></div>
+      <div class="detail-row"><span class="dl">Telefon</span><span class="dv">{{ emp.phone ?? '—' }}</span></div>
+      <div class="detail-row"><span class="dl">Mutaxassislik</span><span class="dv">{{ emp.specializationName ?? '—' }}</span></div>
+      <div class="detail-row"><span class="dl">Lavozim</span><span class="dv">{{ emp.employeeRankName ?? '—' }}</span></div>
+      <div class="detail-row"><span class="dl">Ishga kirish</span><span class="dv">{{ emp.hireDate ?? '—' }}</span></div>
+      <div class="detail-row"><span class="dl">Ishdan ketish</span><span class="dv">{{ emp.fireDate ?? '—' }}</span></div>
+      <div class="detail-row"><span class="dl">Holat</span>
+        <p-tag [value]="emp.isActive ? 'Faol' : 'Nofaol'"
+               [severity]="emp.isActive ? 'success' : 'secondary'" />
+      </div>
+    </div>
+  } @else {
+    <div class="loading-msg"><i class="pi pi-spin pi-spinner"></i> Yuklanmoqda...</div>
+  }
+  <ng-template pTemplate="footer">
+    <p-button label="Yopish" [text]="true" severity="secondary" (onClick)="detailDialogVisible.set(false)" />
+  </ng-template>
+</p-dialog>
+
+<!-- Hire -->
+<p-dialog header="Ishga qabul qilish" [visible]="hireDialogVisible()"
+          (visibleChange)="$event || hireDialogVisible.set(false)"
+          [style]="{width:'360px'}" [modal]="true" [draggable]="false">
+  @if (selectedEmployee(); as emp) {
+    <div class="emp-badge"><i class="pi pi-user"></i><strong>{{ emp.fullName }}</strong></div>
+  }
+  <form [formGroup]="hireForm" class="dialog-form">
+    <div class="field">
+      <label>Ishga kirish sanasi <span class="req">*</span></label>
+      <input pInputText formControlName="hireDate" type="date" class="w-full" />
+    </div>
+  </form>
+  <ng-template pTemplate="footer">
+    <p-button label="Bekor" [text]="true" severity="secondary" (onClick)="hireDialogVisible.set(false)" />
+    <p-button label="Qabul qilish" icon="pi pi-briefcase" severity="success"
+              [loading]="saving()" [disabled]="hireForm.invalid" (onClick)="hireEmployee()" />
+  </ng-template>
+</p-dialog>
+
+<!-- Fire -->
+<p-dialog header="Ishdan bo'shatish" [visible]="fireDialogVisible()"
+          (visibleChange)="$event || fireDialogVisible.set(false)"
+          [style]="{width:'360px'}" [modal]="true" [draggable]="false">
+  @if (selectedEmployee(); as emp) {
+    <div class="emp-badge fire"><i class="pi pi-user"></i><strong>{{ emp.fullName }}</strong></div>
+  }
+  <form [formGroup]="fireForm" class="dialog-form">
+    <div class="field">
+      <label>Ishdan ketish sanasi <span class="req">*</span></label>
+      <input pInputText formControlName="fireDate" type="date" class="w-full" />
+    </div>
+  </form>
+  <ng-template pTemplate="footer">
+    <p-button label="Bekor" [text]="true" severity="secondary" (onClick)="fireDialogVisible.set(false)" />
+    <p-button label="Bo'shatish" icon="pi pi-sign-out" severity="secondary"
+              [loading]="saving()" [disabled]="fireForm.invalid" (onClick)="fireEmployee()" />
+  </ng-template>
+</p-dialog>

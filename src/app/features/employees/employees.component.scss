@@ -1,0 +1,23 @@
+.page { display: flex; flex-direction: column; gap: 1.25rem; }
+.page-header { display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap;
+  h1 { font-size: 1.5rem; font-weight: 700; color: #1e293b; margin-bottom: 0.2rem; }
+  p  { color: #64748b; font-size: 0.875rem; } }
+.action-btns { display: flex; gap: 0.15rem; }
+.empty-msg { text-align: center; padding: 3rem; color: #94a3b8;
+  i { font-size: 2rem; display: block; margin-bottom: 0.5rem; } span { font-size: 0.875rem; } }
+.dialog-form { display: flex; flex-direction: column; gap: 1rem; padding: 0.25rem 0; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;
+  @media (max-width: 480px) { grid-template-columns: 1fr; } }
+.field { display: flex; flex-direction: column; gap: 0.4rem;
+  label { font-size: 0.85rem; font-weight: 500; color: #374151; } }
+.req { color: #ef4444; }
+.detail-grid { display: flex; flex-direction: column; gap: 0.5rem; }
+.detail-row { display: flex; align-items: center; padding: 0.4rem 0; border-bottom: 1px solid #f1f5f9;
+  &:last-child { border-bottom: none; } }
+.dl { width: 130px; font-size: 0.825rem; color: #64748b; flex-shrink: 0; }
+.dv { font-size: 0.875rem; font-weight: 500; color: #1e293b; }
+.loading-msg { display: flex; align-items: center; gap: 0.5rem; color: #64748b; padding: 1rem 0; }
+.emp-badge { display: flex; align-items: center; gap: 0.75rem; background: #f0fdf4;
+  border: 1px solid #bbf7d0; border-radius: 8px; padding: 0.65rem 1rem; margin-bottom: 1rem;
+  i { color: #22c55e; font-size: 1.1rem; }
+  &.fire { background: #fff7ed; border-color: #fed7aa; i { color: #f97316; } } }

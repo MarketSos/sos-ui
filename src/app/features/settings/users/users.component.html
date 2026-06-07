@@ -1,0 +1,139 @@
+<p-toast />
+<p-confirmDialog />
+
+<div class="page">
+  <div class="page-header">
+    <div>
+      <h1>Foydalanuvchilar</h1>
+      <p>Tizim foydalanuvchilari boshqaruvi</p>
+    </div>
+    <p-button label="Yangi foydalanuvchi" icon="pi pi-plus" (onClick)="openCreate()" />
+  </div>
+
+  <p-iconfield>
+    <p-inputicon styleClass="pi pi-search" />
+    <input pInputText [(ngModel)]="searchQuery" placeholder="Login yoki email..." style="width:300px" />
+  </p-iconfield>
+
+  <p-table [value]="filteredUsers" [loading]="loading()" [paginator]="true" [rows]="15" styleClass="p-datatable-sm">
+    <ng-template pTemplate="header">
+      <tr>
+        <th pSortableColumn="userName">Login <p-sortIcon field="userName" /></th>
+        <th>Email</th>
+        <th>Rol</th>
+        <th style="width:100px">Holat</th>
+        <th style="width:160px">Amallar</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-u>
+      <tr>
+        <td><strong>{{ u.userName }}</strong></td>
+        <td>{{ u.email }}</td>
+        <td>{{ roleLabel(u.roles) }}</td>
+        <td>
+          <p-tag [value]="u.isActive ? 'Faol' : 'Bloklangan'"
+                 [severity]="u.isActive ? 'success' : 'danger'" />
+        </td>
+        <td>
+          <div class="action-btns">
+            <p-button icon="pi pi-shield" [rounded]="true" [text]="true" severity="info"
+                      (onClick)="openChangeRole(u)" title="Rol" size="small" />
+            <p-button icon="pi pi-key" [rounded]="true" [text]="true" severity="secondary"
+                      (onClick)="openResetPassword(u)" title="Parol" size="small" />
+            <p-button [icon]="u.isActive ? 'pi pi-lock' : 'pi pi-unlock'"
+                      [rounded]="true" [text]="true"
+                      [severity]="$any(u.isActive ? 'warning' : 'success')"
+                      (onClick)="toggleStatus(u)" size="small"
+                      [title]="u.isActive ? 'Bloklash' : 'Faollashtirish'" />
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage">
+      <tr><td colspan="5" class="empty-msg"><i class="pi pi-users"></i><span>Foydalanuvchilar topilmadi</span></td></tr>
+    </ng-template>
+  </p-table>
+</div>
+
+<!-- Create -->
+<p-dialog header="Yangi foydalanuvchi" [visible]="createDialogVisible()"
+          (visibleChange)="$event || createDialogVisible.set(false)"
+          [style]="{width:'460px'}" [modal]="true" [draggable]="false">
+  <form [formGroup]="createForm" class="dialog-form">
+    <div class="form-row">
+      <div class="field">
+        <label>Login <span class="req">*</span></label>
+        <input pInputText formControlName="userName" placeholder="login_nomi" class="w-full" />
+      </div>
+      <div class="field">
+        <label>Email <span class="req">*</span></label>
+        <input pInputText type="email" formControlName="email" placeholder="email@sos.uz" class="w-full" />
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="field">
+        <label>Parol <span class="req">*</span></label>
+        <p-password formControlName="password" [feedback]="false" [toggleMask]="true"
+                    styleClass="w-full" inputStyleClass="w-full" />
+      </div>
+      <div class="field">
+        <label>Rol <span class="req">*</span></label>
+        <p-select formControlName="roleId" [options]="roles()" optionLabel="nameUz" optionValue="id"
+                  placeholder="Tanlang" styleClass="w-full" />
+      </div>
+    </div>
+  </form>
+  <ng-template pTemplate="footer">
+    <p-button label="Bekor" [text]="true" severity="secondary" (onClick)="createDialogVisible.set(false)" />
+    <p-button label="Yaratish" icon="pi pi-check" [loading]="saving()"
+              [disabled]="createForm.invalid" (onClick)="createUser()" />
+  </ng-template>
+</p-dialog>
+
+<!-- Change Role -->
+<p-dialog header="Rolni o'zgartirish" [visible]="roleDialogVisible()"
+          (visibleChange)="$event || roleDialogVisible.set(false)"
+          [style]="{width:'360px'}" [modal]="true" [draggable]="false">
+  @if (selectedUser(); as u) {
+    <div class="dialog-user-info">
+      <i class="pi pi-user"></i>
+      <div><strong>{{ u.userName }}</strong><br/><small>{{ u.email }}</small></div>
+    </div>
+  }
+  <form [formGroup]="roleForm" class="dialog-form">
+    <div class="field">
+      <label>Yangi rol <span class="req">*</span></label>
+      <p-select formControlName="roleId" [options]="roles()" optionLabel="nameUz" optionValue="id"
+                placeholder="Tanlang" styleClass="w-full" />
+    </div>
+  </form>
+  <ng-template pTemplate="footer">
+    <p-button label="Bekor" [text]="true" severity="secondary" (onClick)="roleDialogVisible.set(false)" />
+    <p-button label="Saqlash" icon="pi pi-check" [loading]="saving()"
+              [disabled]="roleForm.invalid" (onClick)="saveRole()" />
+  </ng-template>
+</p-dialog>
+
+<!-- Reset Password -->
+<p-dialog header="Parolni tiklash" [visible]="passwordDialogVisible()"
+          (visibleChange)="$event || passwordDialogVisible.set(false)"
+          [style]="{width:'360px'}" [modal]="true" [draggable]="false">
+  @if (selectedUser(); as u) {
+    <div class="dialog-user-info">
+      <i class="pi pi-user"></i>
+      <div><strong>{{ u.userName }}</strong></div>
+    </div>
+  }
+  <form [formGroup]="passwordForm" class="dialog-form">
+    <div class="field">
+      <label>Yangi parol <span class="req">*</span></label>
+      <p-password formControlName="newPassword" [feedback]="true" [toggleMask]="true"
+                  styleClass="w-full" inputStyleClass="w-full" />
+    </div>
+  </form>
+  <ng-template pTemplate="footer">
+    <p-button label="Bekor" [text]="true" severity="secondary" (onClick)="passwordDialogVisible.set(false)" />
+    <p-button label="Yangilash" icon="pi pi-key" severity="secondary" [loading]="saving()"
+              [disabled]="passwordForm.invalid" (onClick)="resetPassword()" />
+  </ng-template>
+</p-dialog>
