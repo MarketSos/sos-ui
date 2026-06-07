@@ -1,0 +1,54 @@
+<p-toast />
+
+<div class="page">
+  <div class="page-header">
+    <div>
+      <h1>Ishlab chiqaruvchilar</h1>
+      <p>Mahsulot ishlab chiqaruvchilarini boshqarish.</p>
+    </div>
+    <button pButton type="button" label="Ishlab chiqaruvchi qo'shish" icon="pi pi-plus" (click)="openCreate()"></button>
+  </div>
+
+  <p-table [value]="manufacturers()" [loading]="loading()" styleClass="p-datatable-sm">
+    <ng-template pTemplate="header">
+      <tr>
+        <th>Nom UZ</th>
+        <th>Nom RU</th>
+        <th style="width:170px">Amallar</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-item>
+      <tr>
+        <td>{{ item.nameUz }}</td>
+        <td>{{ item.nameRu }}</td>
+        <td class="table-actions">
+          <button pButton type="button" icon="pi pi-pencil" [text]="true" severity="secondary" (click)="openEdit(item)"></button>
+          <button pButton type="button" icon="pi pi-trash" [text]="true" severity="danger" (click)="delete(item)"></button>
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage">
+      <tr><td colspan="3" class="empty-msg">Ishlab chiqaruvchi topilmadi</td></tr>
+    </ng-template>
+  </p-table>
+</div>
+
+<p-dialog header="Ishlab chiqaruvchi" [visible]="dialogVisible()" (visibleChange)="dialogVisible.set($event)" [modal]="true" [draggable]="false" [style]="{ width: '520px' }">
+  <form [formGroup]="form" class="dialog-form">
+    <label>Nom UZ</label>
+    <input pInputText formControlName="nameUz" placeholder="Ishlab chiqaruvchi nomi" />
+
+    <label>Nom RU</label>
+    <input pInputText formControlName="nameRu" placeholder="Название производителя" />
+
+    <label>Nom EN</label>
+    <input pInputText formControlName="nameEn" placeholder="Manufacturer name" />
+
+    <label>Nom UZ Kiril</label>
+    <input pInputText formControlName="nameUzKiril" placeholder="Ишлаб чиқарувчи номи" />
+  </form>
+  <ng-template pTemplate="footer">
+    <button pButton type="button" label="Bekor qilish" [text]="true" severity="secondary" (click)="dialogVisible.set(false)"></button>
+    <button pButton type="button" label="Saqlash" [disabled]="form.invalid || saving()" (click)="save()"></button>
+  </ng-template>
+</p-dialog>

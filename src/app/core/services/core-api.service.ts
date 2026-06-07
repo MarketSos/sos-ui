@@ -61,6 +61,22 @@ export interface MeasurementUnitDto {
   isWeightBased: boolean;
 }
 
+export interface BrandDto {
+  id: string;
+  nameUz: string;
+  nameRu: string;
+  nameEn: string | null;
+  nameUzKiril: string | null;
+}
+
+export interface ManufacturerDto {
+  id: string;
+  nameUz: string;
+  nameRu: string;
+  nameEn: string | null;
+  nameUzKiril: string | null;
+}
+
 export interface EmployeeSummaryDto {
   id: string;
   userId: string;
@@ -169,6 +185,40 @@ export class CoreApiService {
 
   createMeasurementUnit(req: { code: string; nameUz: string; nameRu: string; nameEn?: string; isWeightBased?: boolean; }): Observable<{ id: string }> {
     return this.api.post<{ id: string }>('catalog', 'measurement-units', req);
+  }
+
+  // ── Brands ───────────────────────────────────────────────────────────────────
+  getBrands(): Observable<BrandDto[]> {
+    return this.api.get<BrandDto[]>('catalog', 'brands');
+  }
+
+  createBrand(req: { nameUz: string; nameRu: string; nameEn?: string; nameUzKiril?: string; }): Observable<{ id: string }> {
+    return this.api.post<{ id: string }>('catalog', 'brands', req);
+  }
+
+  updateBrand(id: string, req: { nameUz: string; nameRu: string; nameEn?: string; nameUzKiril?: string; }): Observable<void> {
+    return this.api.put<void>('catalog', `brands/${id}`, req);
+  }
+
+  deleteBrand(id: string): Observable<void> {
+    return this.api.delete<void>('catalog', `brands/${id}`);
+  }
+
+  // ── Manufacturers ────────────────────────────────────────────────────────────
+  getManufacturers(): Observable<ManufacturerDto[]> {
+    return this.api.get<ManufacturerDto[]>('catalog', 'manufacturers');
+  }
+
+  createManufacturer(req: { nameUz: string; nameRu: string; nameEn?: string; nameUzKiril?: string; }): Observable<{ id: string }> {
+    return this.api.post<{ id: string }>('catalog', 'manufacturers', req);
+  }
+
+  updateManufacturer(id: string, req: { nameUz: string; nameRu: string; nameEn?: string; nameUzKiril?: string; }): Observable<void> {
+    return this.api.put<void>('catalog', `manufacturers/${id}`, req);
+  }
+
+  deleteManufacturer(id: string): Observable<void> {
+    return this.api.delete<void>('catalog', `manufacturers/${id}`);
   }
 
   // ── Employees ──────────────────────────────────────────────────────────────

@@ -74,6 +74,8 @@ const NAV_ITEMS: NavItem[] = [
       { label: 'Mutaxassisliklar', icon: 'pi pi-id-card', route: '/app/references/specializations', roles: ['SuperAdmin'] },
       { label: 'Kategoriyalar', icon: 'pi pi-sitemap', route: '/app/references/categories', roles: ['SuperAdmin'] },
       { label: 'O\'lchov birliklari', icon: 'pi pi-percentage', route: '/app/references/measurement-units', roles: ['SuperAdmin'] },
+      { label: 'Brendlar', icon: 'pi pi-tag', route: '/app/references/brands', roles: ['SuperAdmin'] },
+      { label: 'Ishlab chiqaruvchilar', icon: 'pi pi-building', route: '/app/references/manufacturers', roles: ['SuperAdmin'] },
     ],
   },
 ];

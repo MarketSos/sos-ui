@@ -126,6 +126,14 @@ export const routes: Routes = [
             path: 'measurement-units',
             loadComponent: () => import('./features/references/measurement-units/measurement-units.component').then(m => m.MeasurementUnitsComponent),
           },
+          {
+            path: 'brands',
+            loadComponent: () => import('./features/references/brands/brands.component').then(m => m.BrandsComponent),
+          },
+          {
+            path: 'manufacturers',
+            loadComponent: () => import('./features/references/manufacturers/manufacturers.component').then(m => m.ManufacturersComponent),
+          },
         ],
       },
     ],

@@ -1,0 +1,26 @@
+.page {
+  .page-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .table-actions {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: flex-end;
+  }
+
+  .empty-msg {
+    text-align: center;
+    padding: 1rem 0;
+    color: var(--text-secondary);
+  }
+}
+
+.dialog-form {
+  display: grid;
+  gap: 1rem;
+}
