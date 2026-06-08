@@ -93,7 +93,7 @@ export class LayoutComponent {
 
   user$ = this.store.select(selectCurrentUser);
   collapsed = signal(false);
-  expandedGroups = signal<Set<string>>(new Set(['Katalog', 'Savdo']));
+  expandedGroups = signal<Set<string>>(new Set());
 
   navItems = computed(() => NAV_ITEMS);
 
