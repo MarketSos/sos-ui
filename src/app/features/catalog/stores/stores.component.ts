@@ -18,6 +18,8 @@ import { StoresService } from './stores.service';
 import { OrganizationsService } from '../../organizations/organizations.service';
 import { Store } from './stores.models';
 import { selectCurrentUser } from '../../auth/store/auth.selectors';
+import { TranslatePipe } from '../../../core/i18n/translate.pipe';
+import { LocaleService } from '../../../core/i18n/locale.service';
 
 @Component({
   selector: 'app-stores',
@@ -26,7 +28,7 @@ import { selectCurrentUser } from '../../auth/store/auth.selectors';
     CommonModule, ReactiveFormsModule,
     TableModule, ButtonModule, DialogModule,
     InputTextModule, IconFieldModule, InputIconModule, TagModule, ToastModule,
-    ConfirmDialogModule, TooltipModule,
+    ConfirmDialogModule, TooltipModule, TranslatePipe,
   ],
   providers: [ConfirmationService, MessageService],
   templateUrl: './stores.component.html',
@@ -37,6 +39,7 @@ export class StoresComponent implements OnInit {
   private orgSvc    = inject(OrganizationsService);
   private ngrx      = inject(NgRxStore);
   private fb        = inject(FormBuilder);
+  locale            = inject(LocaleService);
   private confirm   = inject(ConfirmationService);
   private toast     = inject(MessageService);
 
@@ -166,6 +169,7 @@ export class StoresComponent implements OnInit {
   }
 
   get dialogTitle(): string {
-    return this.editingId() ? "Do'konni tahrirlash" : "Yangi do'kon";
+    const key = this.editingId() ? 'btn_edit' : 'page_stores_add';
+    return this.locale.translate(key);
   }
 }

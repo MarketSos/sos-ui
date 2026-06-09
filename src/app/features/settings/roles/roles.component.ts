@@ -8,11 +8,13 @@ import { DialogModule } from 'primeng/dialog';
 import { MessageService } from 'primeng/api';
 import { catchError, of } from 'rxjs';
 import { CoreApiService, RoleSummaryDto, RoleDto } from '../../../core/services/core-api.service';
+import { TranslatePipe } from '../../../core/i18n/translate.pipe';
+import { EntityNamePipe } from '../../../core/i18n/entity-name.pipe';
 
 @Component({
   selector: 'app-roles',
   standalone: true,
-  imports: [CommonModule, TableModule, ButtonModule, TagModule, ToastModule, DialogModule],
+  imports: [CommonModule, TableModule, ButtonModule, TagModule, ToastModule, DialogModule, TranslatePipe, EntityNamePipe],
   providers: [MessageService],
   templateUrl: './roles.component.html',
   styleUrls: ['./roles.component.scss'],

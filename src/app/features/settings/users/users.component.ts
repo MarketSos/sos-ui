@@ -17,6 +17,7 @@ import { InputIconModule } from 'primeng/inputicon';
 import { MessageService, ConfirmationService } from 'primeng/api';
 import { catchError, forkJoin, of } from 'rxjs';
 import { CoreApiService, UserDto, RoleSummaryDto } from '../../../core/services/core-api.service';
+import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 
 @Component({
   selector: 'app-users',
@@ -25,7 +26,7 @@ import { CoreApiService, UserDto, RoleSummaryDto } from '../../../core/services/
     CommonModule, FormsModule, ReactiveFormsModule,
     TableModule, ButtonModule, TagModule, ToastModule,
     DialogModule, InputTextModule, SelectModule, PasswordModule,
-    ConfirmDialogModule, IconFieldModule, InputIconModule,
+    ConfirmDialogModule, IconFieldModule, InputIconModule, TranslatePipe,
   ],
   providers: [MessageService, ConfirmationService],
   templateUrl: './users.component.html',

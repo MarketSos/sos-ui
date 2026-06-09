@@ -15,6 +15,8 @@ import { MessageService } from 'primeng/api';
 import { catchError, of, Observable } from 'rxjs';
 import { StockService } from './stock.service';
 import { StockItem } from './stock.models';
+import { TranslatePipe } from '../../../core/i18n/translate.pipe';
+import { EntityNamePipe } from '../../../core/i18n/entity-name.pipe';
 
 type DialogMode = 'add' | 'deduct' | 'min';
 
@@ -26,6 +28,7 @@ type DialogMode = 'add' | 'deduct' | 'min';
     TableModule, ButtonModule, TagModule, ToastModule,
     DialogModule, InputNumberModule, SelectButtonModule,
     IconFieldModule, InputIconModule, InputTextModule,
+    TranslatePipe, EntityNamePipe,
   ],
   providers: [MessageService],
   templateUrl: './stock.component.html',

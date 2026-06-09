@@ -16,6 +16,8 @@ import { InputIconModule } from 'primeng/inputicon';
 import { MessageService, ConfirmationService } from 'primeng/api';
 import { catchError, forkJoin, of } from 'rxjs';
 import { CoreApiService, EmployeeSummaryDto, EmployeeDto, UserDto } from '../../core/services/core-api.service';
+import { TranslatePipe } from '../../core/i18n/translate.pipe';
+import { EntityNamePipe } from '../../core/i18n/entity-name.pipe';
 
 function passwordsMatchValidator(group: AbstractControl): ValidationErrors | null {
   const pass    = group.get('newPassword')?.value;
@@ -31,6 +33,7 @@ function passwordsMatchValidator(group: AbstractControl): ValidationErrors | nul
     TableModule, ButtonModule, TagModule, ToastModule,
     DialogModule, InputTextModule, SelectModule, PasswordModule,
     ConfirmDialogModule, IconFieldModule, InputIconModule,
+    TranslatePipe, EntityNamePipe,
   ],
   providers: [MessageService, ConfirmationService],
   templateUrl: './employees.component.html',

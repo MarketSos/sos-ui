@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 20">
+  <!-- Karakalpakstan: blue (top half) / yellow stripe / green (bottom half) -->
+  <rect width="30" height="20" fill="#009A44"/>
+  <rect width="30" height="9.5" fill="#009FCA"/>
+  <rect y="9" width="30" height="1.2" fill="#F5C518"/>
+  <!-- crescent on blue -->
+  <circle cx="5" cy="4.5" r="2.4" fill="#fff"/>
+  <circle cx="5.9" cy="4.5" r="1.9" fill="#009FCA"/>
+  <!-- 5 stars -->
+  <circle cx="9"  cy="2.2" r="0.42" fill="#fff"/>
+  <circle cx="10.3" cy="2.2" r="0.42" fill="#fff"/>
+  <circle cx="11.6" cy="2.2" r="0.42" fill="#fff"/>
+  <circle cx="12.9" cy="2.2" r="0.42" fill="#fff"/>
+  <circle cx="14.2" cy="2.2" r="0.42" fill="#fff"/>
+</svg>

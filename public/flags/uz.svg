@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 20">
+  <!-- Uzbekistan: blue / white thin / green, crescent + 12 stars -->
+  <rect width="30" height="20" fill="#1eb53a"/>
+  <rect width="30" height="8" fill="#1ebbd7"/>
+  <rect y="7.5" width="30" height="1.1" fill="#fff"/>
+  <rect y="11.4" width="30" height="1.1" fill="#fff"/>
+  <!-- crescent -->
+  <circle cx="5" cy="4" r="2.4" fill="#fff"/>
+  <circle cx="5.9" cy="4" r="1.9" fill="#1ebbd7"/>
+  <!-- 12 stars in two rows -->
+  <g fill="#fff" font-size="2">
+    <circle cx="9"  cy="1.8" r="0.42"/>
+    <circle cx="10.3" cy="1.8" r="0.42"/>
+    <circle cx="11.6" cy="1.8" r="0.42"/>
+    <circle cx="12.9" cy="1.8" r="0.42"/>
+    <circle cx="14.2" cy="1.8" r="0.42"/>
+    <circle cx="15.5" cy="1.8" r="0.42"/>
+    <circle cx="9"  cy="3.5" r="0.42"/>
+    <circle cx="10.3" cy="3.5" r="0.42"/>
+    <circle cx="11.6" cy="3.5" r="0.42"/>
+    <circle cx="12.9" cy="3.5" r="0.42"/>
+    <circle cx="14.2" cy="3.5" r="0.42"/>
+    <circle cx="15.5" cy="3.5" r="0.42"/>
+  </g>
+</svg>

@@ -1,16 +1,20 @@
-import { Component, signal, inject, computed } from '@angular/core';
+import { Component, signal, inject, computed, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { ButtonModule } from 'primeng/button';
 import { ToastModule } from 'primeng/toast';
+import { FormsModule } from '@angular/forms';
 import { MessageService } from 'primeng/api';
 import { VisibleForPipe } from './visible-for.pipe';
+import { TranslatePipe } from '../core/i18n/translate.pipe';
+import { LocaleService } from '../core/i18n/locale.service';
+import { Locale, SUPPORTED_LOCALES, TranslationKey } from '../core/i18n/translations';
 import { selectCurrentUser } from '../features/auth/store/auth.selectors';
 import { AuthActions } from '../features/auth/store/auth.actions';
 
 export interface NavItem {
-  label: string;
+  labelKey: TranslationKey;
   icon: string;
   route?: string;
   roles?: string[];
@@ -19,64 +23,64 @@ export interface NavItem {
 
 const NAV_ITEMS: NavItem[] = [
   {
-    label: 'Dashboard',
+    labelKey: 'nav_dashboard',
     icon: 'pi pi-home',
     route: '/app/dashboard',
   },
   {
-    label: 'Tashkilot sozlamalari',
+    labelKey: 'nav_org_settings',
     icon: 'pi pi-building',
     children: [
-      { label: 'Tashkilotlar', icon: 'pi pi-building', route: '/app/org-settings/organizations', roles: ['SuperAdmin'] },
-      { label: 'Xodimlar', icon: 'pi pi-users', route: '/app/org-settings/employees', roles: ['SuperAdmin', 'StoreAdmin'] },
-      { label: 'Tashkilot turlari', icon: 'pi pi-tags', route: '/app/org-settings/organization-types', roles: ['SuperAdmin'] },
+      { labelKey: 'nav_organizations', icon: 'pi pi-building', route: '/app/org-settings/organizations',    roles: ['SuperAdmin'] },
+      { labelKey: 'nav_employees',     icon: 'pi pi-users',    route: '/app/org-settings/employees',        roles: ['SuperAdmin', 'StoreAdmin'] },
+      { labelKey: 'nav_org_types',     icon: 'pi pi-tags',     route: '/app/org-settings/organization-types', roles: ['SuperAdmin'] },
     ],
   },
   {
-    label: 'Katalog',
+    labelKey: 'nav_catalog',
     icon: 'pi pi-box',
     children: [
-      { label: 'Mahsulotlar',   icon: 'pi pi-tag',        route: '/app/catalog/products' },
-      { label: 'Do\'konlar',   icon: 'pi pi-shop',        route: '/app/catalog/stores', roles: ['SuperAdmin', 'StoreAdmin'] },
-      { label: 'Qabul qilish', icon: 'pi pi-truck',       route: '/app/catalog/receipt', roles: ['SuperAdmin', 'StoreAdmin'] },
-      { label: 'Ombor',        icon: 'pi pi-warehouse',   route: '/app/catalog/stock' },
-      { label: 'Narxlash',     icon: 'pi pi-percentage',  route: '/app/catalog/pricing', roles: ['SuperAdmin', 'StoreAdmin'] },
+      { labelKey: 'nav_products', icon: 'pi pi-tag',        route: '/app/catalog/products' },
+      { labelKey: 'nav_stores',   icon: 'pi pi-shop',       route: '/app/catalog/stores',  roles: ['SuperAdmin', 'StoreAdmin'] },
+      { labelKey: 'nav_receipt',  icon: 'pi pi-truck',      route: '/app/catalog/receipt', roles: ['SuperAdmin', 'StoreAdmin'] },
+      { labelKey: 'nav_stock',    icon: 'pi pi-warehouse',  route: '/app/catalog/stock' },
+      { labelKey: 'nav_pricing',  icon: 'pi pi-percentage', route: '/app/catalog/pricing', roles: ['SuperAdmin', 'StoreAdmin'] },
     ],
   },
   {
-    label: 'Savdo',
+    labelKey: 'nav_commerce',
     icon: 'pi pi-shopping-cart',
     children: [
-      { label: 'Kassa (POS)', icon: 'pi pi-receipt', route: '/app/commerce/pos', roles: ['SuperAdmin', 'StoreAdmin', 'Cashier'] },
-      { label: 'Mijozlar', icon: 'pi pi-user', route: '/app/commerce/customers' },
-      { label: 'Loyalty', icon: 'pi pi-star', route: '/app/commerce/loyalty' },
+      { labelKey: 'nav_pos',       icon: 'pi pi-receipt', route: '/app/commerce/pos',       roles: ['SuperAdmin', 'StoreAdmin', 'Cashier'] },
+      { labelKey: 'nav_customers', icon: 'pi pi-user',    route: '/app/commerce/customers' },
+      { labelKey: 'nav_loyalty',   icon: 'pi pi-star',    route: '/app/commerce/loyalty' },
     ],
   },
   {
-    label: 'Hisobotlar',
+    labelKey: 'nav_analytics',
     icon: 'pi pi-chart-bar',
     route: '/app/analytics',
     roles: ['SuperAdmin', 'StoreAdmin', 'Analyst'],
   },
   {
-    label: 'Sozlamalar',
+    labelKey: 'nav_settings',
     icon: 'pi pi-cog',
     roles: ['SuperAdmin'],
     children: [
-      { label: 'Foydalanuvchilar', icon: 'pi pi-users', route: '/app/settings/users', roles: ['SuperAdmin'] },
-      { label: 'Rollar', icon: 'pi pi-shield', route: '/app/settings/roles', roles: ['SuperAdmin'] },
+      { labelKey: 'nav_users', icon: 'pi pi-users',  route: '/app/settings/users', roles: ['SuperAdmin'] },
+      { labelKey: 'nav_roles', icon: 'pi pi-shield', route: '/app/settings/roles', roles: ['SuperAdmin'] },
     ],
   },
   {
-    label: 'Ma\'lumotnoma',
+    labelKey: 'nav_references',
     icon: 'pi pi-book',
     roles: ['SuperAdmin'],
     children: [
-      { label: 'Mutaxassisliklar', icon: 'pi pi-id-card', route: '/app/references/specializations', roles: ['SuperAdmin'] },
-      { label: 'Kategoriyalar', icon: 'pi pi-sitemap', route: '/app/references/categories', roles: ['SuperAdmin'] },
-      { label: 'O\'lchov birliklari', icon: 'pi pi-percentage', route: '/app/references/measurement-units', roles: ['SuperAdmin'] },
-      { label: 'Brendlar', icon: 'pi pi-tag', route: '/app/references/brands', roles: ['SuperAdmin'] },
-      { label: 'Ishlab chiqaruvchilar', icon: 'pi pi-building', route: '/app/references/manufacturers', roles: ['SuperAdmin'] },
+      { labelKey: 'nav_specializations',   icon: 'pi pi-id-card',   route: '/app/references/specializations',    roles: ['SuperAdmin'] },
+      { labelKey: 'nav_categories',        icon: 'pi pi-sitemap',   route: '/app/references/categories',         roles: ['SuperAdmin'] },
+      { labelKey: 'nav_measurement_units', icon: 'pi pi-percentage',route: '/app/references/measurement-units',  roles: ['SuperAdmin'] },
+      { labelKey: 'nav_brands',            icon: 'pi pi-tag',       route: '/app/references/brands',             roles: ['SuperAdmin'] },
+      { labelKey: 'nav_manufacturers',     icon: 'pi pi-building',  route: '/app/references/manufacturers',      roles: ['SuperAdmin'] },
     ],
   },
 ];
@@ -84,42 +88,60 @@ const NAV_ITEMS: NavItem[] = [
 @Component({
   selector: 'app-layout',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, RouterLink, RouterLinkActive, ButtonModule, ToastModule, VisibleForPipe],
+  imports: [
+    CommonModule,
+    RouterOutlet, RouterLink, RouterLinkActive,
+    ButtonModule, ToastModule, FormsModule,
+    VisibleForPipe, TranslatePipe,
+  ],
   providers: [MessageService],
   templateUrl: './layout.component.html',
   styleUrls: ['./layout.component.scss'],
 })
 export class LayoutComponent {
   private store = inject(Store);
+  localeService = inject(LocaleService);
 
   user$ = this.store.select(selectCurrentUser);
-  collapsed = signal(false);
-  expandedGroups = signal<Set<string>>(new Set());
+  collapsed       = signal(false);
+  expandedGroups  = signal<Set<TranslationKey>>(new Set());
+  langDropdownOpen = signal(false);
 
-  navItems = computed(() => NAV_ITEMS);
+  navItems         = computed(() => NAV_ITEMS);
+  supportedLocales = SUPPORTED_LOCALES;
 
-  toggleSidebar(): void {
-    this.collapsed.update(v => !v);
+  get currentLocale(): Locale { return this.localeService.currentLocale(); }
+
+  get currentLocaleObj() {
+    return this.supportedLocales.find(l => l.code === this.currentLocale) ?? this.supportedLocales[0];
   }
 
-  toggleGroup(label: string): void {
-    this.expandedGroups.update(set => {
-      const next = new Set(set);
-      next.has(label) ? next.delete(label) : next.add(label);
-      return next;
-    });
+  setLocale(code: Locale): void {
+    this.localeService.setLocale(code);
+    this.langDropdownOpen.set(false);
   }
 
-  isExpanded(label: string): boolean {
-    return this.expandedGroups().has(label);
+  toggleLangDropdown(event: Event): void {
+    event.stopPropagation();
+    this.langDropdownOpen.update(v => !v);
   }
 
-  isVisible(item: NavItem, userRole: string | undefined): boolean {
-    if (!item.roles || item.roles.length === 0) return true;
-    return !!userRole && item.roles.includes(userRole);
+  @HostListener('document:click')
+  closeLangDropdown(): void {
+    this.langDropdownOpen.set(false);
   }
 
-  logout(): void {
-    this.store.dispatch(AuthActions.logout());
+  toggleGroup(key: TranslationKey): void {
+    const s = new Set(this.expandedGroups());
+    s.has(key) ? s.delete(key) : s.add(key);
+    this.expandedGroups.set(s);
   }
+
+  isExpanded(key: TranslationKey): boolean {
+    return this.expandedGroups().has(key);
+  }
+
+  toggleSidebar(): void { this.collapsed.update(v => !v); }
+
+  logout(): void { this.store.dispatch(AuthActions.logout()); }
 }

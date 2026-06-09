@@ -9,19 +9,23 @@ import { InputTextModule } from 'primeng/inputtext';
 import { MessageService } from 'primeng/api';
 import { catchError, Observable, of } from 'rxjs';
 import { CoreApiService, BrandDto } from '../../../core/services/core-api.service';
+import { TranslatePipe } from '../../../core/i18n/translate.pipe';
+import { EntityNamePipe } from '../../../core/i18n/entity-name.pipe';
+import { LocaleService } from '../../../core/i18n/locale.service';
 
 @Component({
   selector: 'app-brands',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, TableModule, ButtonModule, ToastModule, DialogModule, InputTextModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, TableModule, ButtonModule, ToastModule, DialogModule, InputTextModule, TranslatePipe, EntityNamePipe],
   providers: [MessageService],
   templateUrl: './brands.component.html',
   styleUrls: ['./brands.component.scss'],
 })
 export class BrandsComponent implements OnInit {
-  private svc   = inject(CoreApiService);
-  private fb    = inject(FormBuilder);
-  private toast = inject(MessageService);
+  private svc    = inject(CoreApiService);
+  private fb     = inject(FormBuilder);
+  private toast  = inject(MessageService);
+  locale         = inject(LocaleService);
 
   loading = signal(true);
   saving  = signal(false);
@@ -60,9 +64,9 @@ export class BrandsComponent implements OnInit {
     this.editMode.set(true);
     this.selected.set(brand);
     this.form.patchValue({
-      nameUz: brand.nameUz ?? '',
-      nameRu: brand.nameRu ?? '',
-      nameEn: brand.nameEn ?? '',
+      nameUz:      brand.nameUz      ?? '',
+      nameRu:      brand.nameRu      ?? '',
+      nameEn:      brand.nameEn      ?? '',
       nameUzKiril: brand.nameUzKiril ?? '',
     });
     this.dialogVisible.set(true);
@@ -78,9 +82,9 @@ export class BrandsComponent implements OnInit {
       nameUzKiril: string | null;
     };
     const request = {
-      nameUz: data.nameUz ?? '',
-      nameRu: data.nameRu ?? '',
-      nameEn: data.nameEn ?? undefined,
+      nameUz:      data.nameUz      ?? '',
+      nameRu:      data.nameRu      ?? '',
+      nameEn:      data.nameEn      ?? undefined,
       nameUzKiril: data.nameUzKiril ?? undefined,
     };
 
@@ -93,7 +97,7 @@ export class BrandsComponent implements OnInit {
       this.saving.set(false);
       return of(null);
     })).subscribe(() => {
-      this.toast.add({ severity: 'success', summary: this.editMode() ? 'O‘zgartirildi' : 'Yaratildi', detail: data.nameUz ?? '' });
+      this.toast.add({ severity: 'success', summary: this.editMode() ? "O'zgartirildi" : 'Yaratildi', detail: data.nameUz ?? '' });
       this.saving.set(false);
       this.dialogVisible.set(false);
       this.load();
@@ -106,7 +110,7 @@ export class BrandsComponent implements OnInit {
       this.toast.add({ severity: 'error', summary: 'Xato', detail: err.error?.error ?? 'Xato' });
       return of(undefined);
     })).subscribe(() => {
-      this.toast.add({ severity: 'success', summary: 'O‘chirildi', detail: brand.nameUz });
+      this.toast.add({ severity: 'success', summary: "O'chirildi", detail: brand.nameUz });
       this.load();
     });
   }

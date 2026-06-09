@@ -3,24 +3,22 @@
 <div class="page">
   <div class="page-header">
     <div>
-      <h1>Brendlar</h1>
-      <p>Mahsulot brendlarini boshqarish.</p>
+      <h1>{{ 'page_brands_title' | translate }}</h1>
+      <p>{{ 'page_brands_desc' | translate }}</p>
     </div>
-    <button pButton type="button" label="Brend qo'shish" icon="pi pi-plus" (click)="openCreate()"></button>
+    <button pButton type="button" [label]="'page_brands_add' | translate" icon="pi pi-plus" (click)="openCreate()"></button>
   </div>
 
   <p-table [value]="brands()" [loading]="loading()" styleClass="p-datatable-sm">
     <ng-template pTemplate="header">
       <tr>
-        <th>Nom UZ</th>
-        <th>Nom RU</th>
-        <th style="width:170px">Amallar</th>
+        <th>{{ 'lbl_name' | translate }}</th>
+        <th style="width:170px">{{ 'lbl_actions' | translate }}</th>
       </tr>
     </ng-template>
     <ng-template pTemplate="body" let-item>
       <tr>
-        <td>{{ item.nameUz }}</td>
-        <td>{{ item.nameRu }}</td>
+        <td>{{ item | entityName }}</td>
         <td class="table-actions">
           <button pButton type="button" icon="pi pi-pencil" [text]="true" severity="secondary" (click)="openEdit(item)"></button>
           <button pButton type="button" icon="pi pi-trash" [text]="true" severity="danger" (click)="delete(item)"></button>
@@ -28,27 +26,27 @@
       </tr>
     </ng-template>
     <ng-template pTemplate="emptymessage">
-      <tr><td colspan="3" class="empty-msg">Brend topilmadi</td></tr>
+      <tr><td colspan="2" class="empty-msg">{{ 'page_brands_empty' | translate }}</td></tr>
     </ng-template>
   </p-table>
 </div>
 
-<p-dialog header="Brend" [visible]="dialogVisible()" (visibleChange)="dialogVisible.set($event)" [modal]="true" [draggable]="false" [style]="{ width: '520px' }">
+<p-dialog [header]="'dlg_brand' | translate" [visible]="dialogVisible()" (visibleChange)="dialogVisible.set($event)" [modal]="true" [draggable]="false" [style]="{ width: '520px' }">
   <form [formGroup]="form" class="dialog-form">
-    <label>Nom UZ</label>
+    <label>{{ 'lbl_name_uz' | translate }}</label>
     <input pInputText formControlName="nameUz" placeholder="Brend nomi" />
 
-    <label>Nom RU</label>
+    <label>{{ 'lbl_name_ru' | translate }}</label>
     <input pInputText formControlName="nameRu" placeholder="Название бренда" />
 
-    <label>Nom EN</label>
+    <label>{{ 'lbl_name_en' | translate }}</label>
     <input pInputText formControlName="nameEn" placeholder="Brand name" />
 
-    <label>Nom UZ Kiril</label>
+    <label>{{ 'lbl_name_uz_cyrl' | translate }}</label>
     <input pInputText formControlName="nameUzKiril" placeholder="Бренд номи" />
   </form>
   <ng-template pTemplate="footer">
-    <button pButton type="button" label="Bekor qilish" [text]="true" severity="secondary" (click)="dialogVisible.set(false)"></button>
-    <button pButton type="button" label="Saqlash" [disabled]="form.invalid || saving()" (click)="save()"></button>
+    <button pButton type="button" [label]="'btn_cancel' | translate" [text]="true" severity="secondary" (click)="dialogVisible.set(false)"></button>
+    <button pButton type="button" [label]="'btn_save' | translate" [disabled]="form.invalid || saving()" (click)="save()"></button>
   </ng-template>
 </p-dialog>

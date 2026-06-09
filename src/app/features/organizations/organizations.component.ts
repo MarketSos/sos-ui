@@ -17,6 +17,7 @@ import { Observable } from 'rxjs';
 import { catchError, of } from 'rxjs';
 import { OrganizationsService } from './organizations.service';
 import { OrganizationSummary, OrganizationType } from './organizations.models';
+import { TranslatePipe } from '../../core/i18n/translate.pipe';
 
 const ORG_TYPES: { label: string; value: OrganizationType }[] = [
   { label: 'Markaziy',  value: 'Central'   },
@@ -35,7 +36,7 @@ const ORG_TYPES: { label: string; value: OrganizationType }[] = [
     TableModule, ButtonModule, DialogModule,
     InputTextModule, SelectModule, TagModule,
     ToolbarModule, ConfirmDialogModule, ToastModule,
-    ToggleSwitchModule, TooltipModule,
+    ToggleSwitchModule, TooltipModule, TranslatePipe,
   ],
   providers: [ConfirmationService, MessageService],
   templateUrl: './organizations.component.html',

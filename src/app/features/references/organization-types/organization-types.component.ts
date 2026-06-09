@@ -9,11 +9,13 @@ import { InputTextModule } from 'primeng/inputtext';
 import { MessageService } from 'primeng/api';
 import { catchError, Observable, of } from 'rxjs';
 import { CoreApiService, OrgTypeDto } from '../../../core/services/core-api.service';
+import { TranslatePipe } from '../../../core/i18n/translate.pipe';
+import { EntityNamePipe } from '../../../core/i18n/entity-name.pipe';
 
 @Component({
   selector: 'app-organization-types',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, TableModule, ButtonModule, ToastModule, DialogModule, InputTextModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, TableModule, ButtonModule, ToastModule, DialogModule, InputTextModule, TranslatePipe, EntityNamePipe],
   providers: [MessageService],
   templateUrl: './organization-types.component.html',
   styleUrls: ['./organization-types.component.scss'],
@@ -62,11 +64,11 @@ export class OrganizationTypesComponent implements OnInit {
     this.editMode.set(true);
     this.selected.set(orgType);
     this.form.patchValue({
-      code: orgType.code ?? '',
+      code:   orgType.code   ?? '',
       nameUz: orgType.nameUz ?? '',
       nameRu: orgType.nameRu ?? '',
       nameEn: orgType.nameEn ?? '',
-      icon: orgType.icon ?? '',
+      icon:   orgType.icon   ?? '',
     });
     this.form.get('code')?.disable();
     this.dialogVisible.set(true);
@@ -76,17 +78,17 @@ export class OrganizationTypesComponent implements OnInit {
     if (this.form.invalid) return;
     this.saving.set(true);
     const data = this.form.getRawValue() as {
-      code: string | null;
+      code:   string | null;
       nameUz: string | null;
       nameRu: string | null;
       nameEn: string | null;
-      icon: string | null;
+      icon:   string | null;
     };
     const request = {
       nameUz: data.nameUz ?? '',
       nameRu: data.nameRu ?? '',
       nameEn: data.nameEn ?? undefined,
-      icon: data.icon ?? undefined,
+      icon:   data.icon   ?? undefined,
     };
 
     const action$: Observable<unknown> = this.editMode() && this.selected()
@@ -98,7 +100,7 @@ export class OrganizationTypesComponent implements OnInit {
       this.saving.set(false);
       return of(null);
     })).subscribe(() => {
-      this.toast.add({ severity: 'success', summary: this.editMode() ? 'O‘zgartirildi' : 'Yaratildi', detail: data.nameUz ?? '' });
+      this.toast.add({ severity: 'success', summary: this.editMode() ? "O'zgartirildi" : 'Yaratildi', detail: data.nameUz ?? '' });
       this.saving.set(false);
       this.dialogVisible.set(false);
       this.load();
@@ -111,7 +113,7 @@ export class OrganizationTypesComponent implements OnInit {
       this.toast.add({ severity: 'error', summary: 'Xato', detail: err.error?.error ?? 'Xato' });
       return of(undefined);
     })).subscribe(() => {
-      this.toast.add({ severity: 'success', summary: 'O‘chirildi', detail: orgType.nameUz });
+      this.toast.add({ severity: 'success', summary: "O'chirildi", detail: orgType.nameUz });
       this.load();
     });
   }

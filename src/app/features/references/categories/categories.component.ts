@@ -6,11 +6,13 @@ import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
 import { catchError, of } from 'rxjs';
 import { CoreApiService, CategoryDto } from '../../../core/services/core-api.service';
+import { TranslatePipe } from '../../../core/i18n/translate.pipe';
+import { EntityNamePipe } from '../../../core/i18n/entity-name.pipe';
 
 @Component({
   selector: 'app-categories',
   standalone: true,
-  imports: [CommonModule, TableModule, ButtonModule, ToastModule],
+  imports: [CommonModule, TableModule, ButtonModule, ToastModule, TranslatePipe, EntityNamePipe],
   providers: [MessageService],
   templateUrl: './categories.component.html',
   styleUrls: ['./categories.component.scss'],

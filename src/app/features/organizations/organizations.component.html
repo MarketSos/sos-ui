@@ -6,10 +6,10 @@
   <!-- Header -->
   <div class="page-header">
     <div>
-      <h1>Tashkilotlar</h1>
-      <p>Barcha tashkilotlar ro'yxati</p>
+      <h1>{{ 'page_orgs_title' | translate }}</h1>
+      <p>{{ 'page_orgs_desc' | translate }}</p>
     </div>
-    <p-button label="Yangi tashkilot" icon="pi pi-plus" (onClick)="openCreate()" />
+    <p-button [label]="'page_orgs_add' | translate" icon="pi pi-plus" (onClick)="openCreate()" />
   </div>
 
   <!-- Table -->
@@ -51,7 +51,7 @@
         <td>{{ org.code ?? '—' }}</td>
         <td>
           <p-tag
-            [value]="org.isActive ? 'Faol' : 'Nofaol'"
+            [value]="org.isActive ? ('lbl_active' | translate) : ('lbl_inactive' | translate)"
             [severity]="org.isActive ? 'success' : 'danger'"
           />
         </td>
@@ -84,7 +84,7 @@
       <tr>
         <td colspan="6" class="empty-msg">
           <i class="pi pi-building"></i>
-          <span>Tashkilotlar topilmadi</span>
+          <span>{{ 'page_orgs_empty' | translate }}</span>
         </td>
       </tr>
     </ng-template>
@@ -158,9 +158,9 @@
   </form>
 
   <ng-template pTemplate="footer">
-    <p-button label="Bekor qilish" [text]="true" severity="secondary" (onClick)="closeDialog()" />
+    <p-button [label]="'btn_cancel' | translate" [text]="true" severity="secondary" (onClick)="closeDialog()" />
     <p-button
-      [label]="editingId() ? 'Saqlash' : 'Yaratish'"
+      [label]="editingId() ? ('btn_save' | translate) : ('btn_create' | translate)"
       [icon]="saving() ? 'pi pi-spin pi-spinner' : 'pi pi-check'"
       [disabled]="form.invalid || saving()"
       (onClick)="save()"

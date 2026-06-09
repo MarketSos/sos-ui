@@ -6,14 +6,18 @@ import { ButtonModule } from 'primeng/button';
 import { ToastModule } from 'primeng/toast';
 import { DialogModule } from 'primeng/dialog';
 import { InputTextModule } from 'primeng/inputtext';
+import { CheckboxModule } from 'primeng/checkbox';
 import { MessageService } from 'primeng/api';
 import { catchError, of } from 'rxjs';
 import { CoreApiService, MeasurementUnitDto } from '../../../core/services/core-api.service';
+import { TranslatePipe } from '../../../core/i18n/translate.pipe';
+import { EntityNamePipe } from '../../../core/i18n/entity-name.pipe';
+import { LocaleService } from '../../../core/i18n/locale.service';
 
 @Component({
   selector: 'app-measurement-units',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, TableModule, ButtonModule, ToastModule, DialogModule, InputTextModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, TableModule, ButtonModule, ToastModule, DialogModule, InputTextModule, CheckboxModule, TranslatePipe, EntityNamePipe],
   providers: [MessageService],
   templateUrl: './measurement-units.component.html',
   styleUrls: ['./measurement-units.component.scss'],
@@ -22,6 +26,7 @@ export class MeasurementUnitsComponent implements OnInit {
   private svc   = inject(CoreApiService);
   private fb    = inject(FormBuilder);
   private toast = inject(MessageService);
+  locale        = inject(LocaleService);
 
   loading = signal(true);
   saving  = signal(false);
@@ -57,17 +62,17 @@ export class MeasurementUnitsComponent implements OnInit {
     if (this.form.invalid) return;
     this.saving.set(true);
     const data = this.form.getRawValue() as {
-      code: string | null;
-      nameUz: string | null;
-      nameRu: string | null;
-      nameEn: string | null;
+      code:          string | null;
+      nameUz:        string | null;
+      nameRu:        string | null;
+      nameEn:        string | null;
       isWeightBased: boolean | null;
     };
     this.svc.createMeasurementUnit({
-      code: data.code ?? '',
-      nameUz: data.nameUz ?? '',
-      nameRu: data.nameRu ?? '',
-      nameEn: data.nameEn ?? undefined,
+      code:          data.code   ?? '',
+      nameUz:        data.nameUz ?? '',
+      nameRu:        data.nameRu ?? '',
+      nameEn:        data.nameEn ?? undefined,
       isWeightBased: !!data.isWeightBased,
     }).pipe(catchError(err => {
       this.toast.add({ severity: 'error', summary: 'Xato', detail: err.error?.error ?? 'Xato' });

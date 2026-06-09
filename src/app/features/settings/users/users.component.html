@@ -4,10 +4,10 @@
 <div class="page">
   <div class="page-header">
     <div>
-      <h1>Foydalanuvchilar</h1>
-      <p>Tizim foydalanuvchilari boshqaruvi</p>
+      <h1>{{ 'page_users_title' | translate }}</h1>
+      <p>{{ 'page_users_desc' | translate }}</p>
     </div>
-    <p-button label="Yangi foydalanuvchi" icon="pi pi-plus" (onClick)="openCreate()" />
+    <p-button [label]="'page_users_add' | translate" icon="pi pi-plus" (onClick)="openCreate()" />
   </div>
 
   <p-iconfield>
@@ -31,7 +31,7 @@
         <td>{{ u.email }}</td>
         <td>{{ roleLabel(u.roles) }}</td>
         <td>
-          <p-tag [value]="u.isActive ? 'Faol' : 'Bloklangan'"
+          <p-tag [value]="u.isActive ? ('lbl_active' | translate) : ('lbl_inactive' | translate)"
                  [severity]="u.isActive ? 'success' : 'danger'" />
         </td>
         <td>
@@ -50,7 +50,7 @@
       </tr>
     </ng-template>
     <ng-template pTemplate="emptymessage">
-      <tr><td colspan="5" class="empty-msg"><i class="pi pi-users"></i><span>Foydalanuvchilar topilmadi</span></td></tr>
+      <tr><td colspan="5" class="empty-msg"><i class="pi pi-users"></i><span>{{ 'page_users_empty' | translate }}</span></td></tr>
     </ng-template>
   </p-table>
 </div>

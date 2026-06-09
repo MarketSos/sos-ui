@@ -20,6 +20,9 @@ import { ConfirmationService, MessageService } from 'primeng/api';
 import { catchError, of, forkJoin, debounceTime, distinctUntilChanged, Subject, switchMap } from 'rxjs';
 import { ProductsService } from './products.service';
 import { Product, Sku, MeasurementUnit, Category, CreateSkuRequest } from './products.models';
+import { TranslatePipe } from '../../../core/i18n/translate.pipe';
+import { EntityNamePipe } from '../../../core/i18n/entity-name.pipe';
+import { LocaleService } from '../../../core/i18n/locale.service';
 
 @Component({
   selector: 'app-products',
@@ -30,6 +33,7 @@ import { Product, Sku, MeasurementUnit, Category, CreateSkuRequest } from './pro
     InputTextModule, InputNumberModule, SelectModule, AutoCompleteModule,
     TagModule, ToolbarModule, ConfirmDialogModule,
     ToastModule, TabsModule, IconFieldModule, InputIconModule,
+    TranslatePipe, EntityNamePipe,
   ],
   providers: [ConfirmationService, MessageService],
   templateUrl: './products.component.html',
@@ -39,6 +43,7 @@ export class ProductsComponent implements OnInit {
   private svc     = inject(ProductsService);
   private fb      = inject(FormBuilder);
   private toast   = inject(MessageService);
+  locale          = inject(LocaleService);
 
   products   = signal<Product[]>([]);
   skus       = signal<Sku[]>([]);

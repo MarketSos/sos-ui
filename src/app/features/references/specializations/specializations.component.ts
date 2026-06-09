@@ -9,11 +9,13 @@ import { InputTextModule } from 'primeng/inputtext';
 import { MessageService } from 'primeng/api';
 import { catchError, Observable, of } from 'rxjs';
 import { CoreApiService, SpecializationDto } from '../../../core/services/core-api.service';
+import { TranslatePipe } from '../../../core/i18n/translate.pipe';
+import { EntityNamePipe } from '../../../core/i18n/entity-name.pipe';
 
 @Component({
   selector: 'app-specializations',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, TableModule, ButtonModule, ToastModule, DialogModule, InputTextModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, TableModule, ButtonModule, ToastModule, DialogModule, InputTextModule, TranslatePipe, EntityNamePipe],
   providers: [MessageService],
   templateUrl: './specializations.component.html',
   styleUrls: ['./specializations.component.scss'],
@@ -61,10 +63,10 @@ export class SpecializationsComponent implements OnInit {
     this.editMode.set(true);
     this.selected.set(spec);
     this.form.patchValue({
-      code: spec.code ?? '',
-      nameUz: spec.nameUz ?? '',
-      nameRu: spec.nameRu ?? '',
-      nameEn: spec.nameEn ?? '',
+      code:        spec.code        ?? '',
+      nameUz:      spec.nameUz      ?? '',
+      nameRu:      spec.nameRu      ?? '',
+      nameEn:      spec.nameEn      ?? '',
       nameUzKiril: spec.nameUzKiril ?? '',
     });
     this.dialogVisible.set(true);
@@ -81,10 +83,10 @@ export class SpecializationsComponent implements OnInit {
       nameUzKiril: string | null;
     };
     const request = {
-      code: data.code ?? '',
-      nameUz: data.nameUz ?? '',
-      nameRu: data.nameRu ?? '',
-      nameEn: data.nameEn ?? undefined,
+      code:        data.code        ?? '',
+      nameUz:      data.nameUz      ?? '',
+      nameRu:      data.nameRu      ?? '',
+      nameEn:      data.nameEn      ?? undefined,
       nameUzKiril: data.nameUzKiril ?? undefined,
     };
 
@@ -97,7 +99,7 @@ export class SpecializationsComponent implements OnInit {
       this.saving.set(false);
       return of(null);
     })).subscribe(() => {
-      this.toast.add({ severity: 'success', summary: this.editMode() ? 'O‘zgartirildi' : 'Yaratildi', detail: data.nameUz ?? '' });
+      this.toast.add({ severity: 'success', summary: this.editMode() ? "O'zgartirildi" : 'Yaratildi', detail: data.nameUz ?? '' });
       this.saving.set(false);
       this.dialogVisible.set(false);
       this.load();
@@ -110,7 +112,7 @@ export class SpecializationsComponent implements OnInit {
       this.toast.add({ severity: 'error', summary: 'Xato', detail: err.error?.error ?? 'Xato' });
       return of(undefined);
     })).subscribe(() => {
-      this.toast.add({ severity: 'success', summary: 'O‘chirildi', detail: spec.nameUz });
+      this.toast.add({ severity: 'success', summary: "O'chirildi", detail: spec.nameUz });
       this.load();
     });
   }

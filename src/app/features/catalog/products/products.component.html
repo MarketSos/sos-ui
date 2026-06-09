@@ -6,10 +6,10 @@
   <!-- Header -->
   <div class="page-header">
     <div>
-      <h1>Mahsulotlar</h1>
-      <p>Katalog — barcha mahsulotlar</p>
+      <h1>{{ 'page_products_title' | translate }}</h1>
+      <p>{{ 'page_products_desc' | translate }}</p>
     </div>
-    <p-button label="Yangi mahsulot" icon="pi pi-plus" (onClick)="openCreate()" />
+    <p-button [label]="'page_products_add' | translate" icon="pi pi-plus" (onClick)="openCreate()" />
   </div>
 
   <!-- Search -->
@@ -19,7 +19,7 @@
       pInputText
       [(ngModel)]="searchQuery"
       (ngModelChange)="onSearch($event)"
-      placeholder="Nom yoki barcode bo'yicha qidirish..."
+      [placeholder]="'page_products_search' | translate"
       style="width: 340px"
     />
   </p-iconfield>
@@ -35,24 +35,22 @@
   >
     <ng-template pTemplate="header">
       <tr>
-        <th>Nomi (UZ)</th>
-        <th>Nomi (RU)</th>
+        <th>{{ 'lbl_name' | translate }}</th>
         <th>Barcode</th>
-        <th>Kategoriya</th>
-        <th>Holat</th>
-        <th style="width: 100px">Amallar</th>
+        <th>{{ 'nav_categories' | translate }}</th>
+        <th>{{ 'lbl_status' | translate }}</th>
+        <th style="width: 100px">{{ 'lbl_actions' | translate }}</th>
       </tr>
     </ng-template>
 
     <ng-template pTemplate="body" let-p>
       <tr>
-        <td><strong>{{ p.nameUz }}</strong></td>
-        <td>{{ p.nameRu }}</td>
+        <td><strong>{{ p | entityName }}</strong></td>
         <td><code class="barcode">{{ p.barcode }}</code></td>
         <td>{{ categoryLabel(p.categoryId) }}</td>
         <td>
           <p-tag
-            [value]="p.isActive ? 'Faol' : 'Nofaol'"
+            [value]="p.isActive ? ('lbl_active' | translate) : ('lbl_inactive' | translate)"
             [severity]="p.isActive ? 'success' : 'danger'"
           />
         </td>
@@ -70,9 +68,9 @@
 
     <ng-template pTemplate="emptymessage">
       <tr>
-        <td colspan="6" class="empty-msg">
+        <td colspan="5" class="empty-msg">
           <i class="pi pi-box"></i>
-          <span>Mahsulotlar topilmadi</span>
+          <span>{{ 'page_products_empty' | translate }}</span>
         </td>
       </tr>
     </ng-template>
@@ -81,7 +79,7 @@
 
 <!-- ── Create Product Dialog ── -->
 <p-dialog
-  header="Yangi mahsulot"
+  [header]="'page_products_add' | translate"
   [visible]="createDialogVisible()"
   (visibleChange)="$event || createDialogVisible.set(false)"
   [style]="{ width: '520px' }"
@@ -92,14 +90,14 @@
 
     <div class="form-row">
       <div class="field">
-        <label>Nomi (UZ) <span class="req">*</span></label>
+        <label>{{ 'lbl_name_uz' | translate }} <span class="req">*</span></label>
         <input pInputText formControlName="nameUz" placeholder="O'zbekcha" class="w-full" />
         @if (createForm.get('nameUz')?.invalid && createForm.get('nameUz')?.touched) {
           <small class="err">Majburiy, kamida 2 ta belgi</small>
         }
       </div>
       <div class="field">
-        <label>Nomi (RU) <span class="req">*</span></label>
+        <label>{{ 'lbl_name_ru' | translate }} <span class="req">*</span></label>
         <input pInputText formControlName="nameRu" placeholder="Русский" class="w-full" />
         @if (createForm.get('nameRu')?.invalid && createForm.get('nameRu')?.touched) {
           <small class="err">Majburiy, kamida 2 ta belgi</small>
@@ -109,11 +107,11 @@
 
     <div class="form-row">
       <div class="field">
-        <label>Nomi (EN)</label>
+        <label>{{ 'lbl_name_en' | translate }}</label>
         <input pInputText formControlName="nameEn" placeholder="English" class="w-full" />
       </div>
       <div class="field">
-        <label>Nomi (Kiril)</label>
+        <label>{{ 'lbl_name_uz_cyrl' | translate }}</label>
         <input pInputText formControlName="nameUzKiril" placeholder="Ўзбекча" class="w-full" />
       </div>
     </div>
@@ -127,15 +125,15 @@
         }
       </div>
       <div class="field">
-        <label>Kategoriya <span class="req">*</span></label>
+        <label>{{ 'nav_categories' | translate }} <span class="req">*</span></label>
         <p-autocomplete
           [ngModel]="selectedCategory()"
           (ngModelChange)="selectedCategory.set($event)"
           [ngModelOptions]="{ standalone: true }"
           [suggestions]="filteredCategories()"
           (completeMethod)="filterCategories($event)"
-          optionLabel="nameUz"
-          placeholder="Kategoriya tanlang..."
+          [optionLabel]="'nameUz'"
+          [placeholder]="'nav_categories' | translate"
           [forceSelection]="true"
           [dropdown]="true"
           styleClass="w-full"
@@ -143,7 +141,7 @@
         >
           <ng-template let-cat pTemplate="item">
             <div class="cat-item">
-              <span class="cat-name">{{ cat.nameUz }}</span>
+              <span class="cat-name">{{ cat | entityName }}</span>
               @if (cat.parentId) {
                 <small class="cat-sub">{{ cat.nameRu }}</small>
               } @else {
@@ -161,9 +159,9 @@
   </form>
 
   <ng-template pTemplate="footer">
-    <p-button label="Bekor" [text]="true" severity="secondary" (onClick)="createDialogVisible.set(false)" />
+    <p-button [label]="'btn_cancel' | translate" [text]="true" severity="secondary" (onClick)="createDialogVisible.set(false)" />
     <p-button
-      label="Yaratish"
+      [label]="'btn_create' | translate"
       icon="pi pi-check"
       [loading]="saving()"
       [disabled]="createForm.invalid || !isCategorySelected"
@@ -174,7 +172,7 @@
 
 <!-- ── SKU Dialog ── -->
 <p-dialog
-  [header]="'SKU — ' + (selectedProduct()?.nameUz ?? '')"
+  [header]="'SKU — ' + ((selectedProduct() | entityName) || '')"
   [visible]="skuDialogVisible()"
   (visibleChange)="$event || skuDialogVisible.set(false)"
   [style]="{ width: '700px' }"
@@ -231,19 +229,15 @@
                   size="small"
                 />
               </div>
-              <small class="hint">
-                <i class="pi pi-info-circle"></i>
-                Bo'sh qoldirsangiz yoki <i class="pi pi-refresh"></i> bosib avtomatik raqam oling
-              </small>
             </div>
             <div class="field">
-              <label>O'lchov birligi <span class="req">*</span></label>
+              <label>{{ 'page_units_title' | translate }} <span class="req">*</span></label>
               <p-select
                 formControlName="measurementUnitId"
                 [options]="units()"
-                optionLabel="nameUz"
+                [optionLabel]="'nameUz'"
                 optionValue="id"
-                placeholder="Tanlang"
+                [placeholder]="'lbl_search' | translate"
                 styleClass="w-full"
               />
             </div>

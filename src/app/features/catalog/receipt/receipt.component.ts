@@ -25,6 +25,8 @@ function localSerial(count: number): string {
 }
 import { ProductsService } from '../products/products.service';
 import { Product, Category, MeasurementUnit } from '../products/products.models';
+import { TranslatePipe } from '../../../core/i18n/translate.pipe';
+import { EntityNamePipe } from '../../../core/i18n/entity-name.pipe';
 
 export type ReceiptStep = 'search' | 'sku' | 'new-product';
 
@@ -48,6 +50,7 @@ export interface ReceiptLine {
     TableModule, TagModule, ToastModule, DividerModule,
     StepperModule, SelectModule, AutoCompleteModule,
     IconFieldModule, InputIconModule, MessageModule,
+    TranslatePipe, EntityNamePipe,
   ],
   providers: [MessageService],
   templateUrl: './receipt.component.html',

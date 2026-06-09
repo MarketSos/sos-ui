@@ -6,10 +6,10 @@
   <!-- Header -->
   <div class="page-header">
     <div>
-      <h1>Do'konlar</h1>
-      <p>Katalog — do'konlar ro'yxati</p>
+      <h1>{{ 'page_stores_title' | translate }}</h1>
+      <p>{{ 'page_stores_desc' | translate }}</p>
     </div>
-    <p-button label="Yangi do'kon" icon="pi pi-plus" (onClick)="openCreate()" />
+    <p-button [label]="'page_stores_add' | translate" icon="pi pi-plus" (onClick)="openCreate()" />
   </div>
 
   <!-- Table -->
@@ -29,7 +29,7 @@
           <p-inputicon styleClass="pi pi-search" />
           <input
             pInputText
-            placeholder="Qidirish..."
+            [placeholder]="'lbl_search' | translate"
             (input)="dt.filterGlobal($any($event.target).value, 'contains')"
           />
         </p-iconfield>
@@ -38,12 +38,12 @@
 
     <ng-template pTemplate="header">
       <tr>
-        <th pSortableColumn="code">Kod <p-sortIcon field="code" /></th>
-        <th pSortableColumn="name">Nomi <p-sortIcon field="name" /></th>
-        <th>Manzil</th>
-        <th>Telefon</th>
-        <th>Holat</th>
-        <th style="width: 120px">Amallar</th>
+        <th pSortableColumn="code">{{ 'lbl_code' | translate }} <p-sortIcon field="code" /></th>
+        <th pSortableColumn="name">{{ 'lbl_name' | translate }} <p-sortIcon field="name" /></th>
+        <th>{{ 'lbl_address' | translate }}</th>
+        <th>{{ 'lbl_phone' | translate }}</th>
+        <th>{{ 'lbl_status' | translate }}</th>
+        <th style="width: 120px">{{ 'lbl_actions' | translate }}</th>
       </tr>
     </ng-template>
 
@@ -55,7 +55,7 @@
         <td>{{ store.phone ?? '—' }}</td>
         <td>
           <p-tag
-            [value]="store.isActive ? 'Faol' : 'Nofaol'"
+            [value]="store.isActive ? ('lbl_active' | translate) : ('lbl_inactive' | translate)"
             [severity]="store.isActive ? 'success' : 'danger'"
           />
         </td>
@@ -65,21 +65,21 @@
               icon="pi pi-pencil"
               [rounded]="true" [text]="true"
               severity="info"
-              pTooltip="Tahrirlash"
+              [pTooltip]="'btn_edit' | translate"
               (onClick)="openEdit(store)"
             />
             <p-button
               [icon]="store.isActive ? 'pi pi-eye-slash' : 'pi pi-eye'"
               [rounded]="true" [text]="true"
               [severity]="store.isActive ? 'warn' : 'success'"
-              [pTooltip]="store.isActive ? 'O\'chirish' : 'Faollashtirish'"
+              [pTooltip]="store.isActive ? ('btn_deactivate' | translate) : ('btn_activate' | translate)"
               (onClick)="toggleStatus(store)"
             />
             <p-button
               icon="pi pi-trash"
               [rounded]="true" [text]="true"
               severity="danger"
-              pTooltip="O'chirish"
+              [pTooltip]="'btn_delete' | translate"
               (onClick)="confirmDelete(store)"
             />
           </div>
@@ -91,7 +91,7 @@
       <tr>
         <td colspan="6" class="empty-msg">
           <i class="pi pi-shop"></i>
-          <span>Do'konlar topilmadi</span>
+          <span>{{ 'page_stores_empty' | translate }}</span>
         </td>
       </tr>
     </ng-template>
@@ -112,41 +112,35 @@
 
     <div class="form-row">
       <div class="field">
-        <label>Kod <span class="req">*</span></label>
+        <label>{{ 'lbl_code' | translate }} <span class="req">*</span></label>
         <input pInputText formControlName="code" placeholder="D-001" class="w-full" />
         @if (form.get('code')?.invalid && form.get('code')?.touched) {
-          <small class="err">Majburiy, kamida 2 ta belgi</small>
+          <small class="err">{{ 'err_required_min2' | translate }}</small>
         }
       </div>
       <div class="field">
-        <label>Nomi <span class="req">*</span></label>
-        <input pInputText formControlName="name" placeholder="Asosiy do'kon" class="w-full" />
+        <label>{{ 'lbl_name' | translate }} <span class="req">*</span></label>
+        <input pInputText formControlName="name" class="w-full" />
         @if (form.get('name')?.invalid && form.get('name')?.touched) {
-          <small class="err">Majburiy, kamida 2 ta belgi</small>
+          <small class="err">{{ 'err_required_min2' | translate }}</small>
         }
       </div>
     </div>
 
     <div class="field">
-      <label>Manzil</label>
-      <input pInputText formControlName="address" placeholder="Toshkent, Chilonzor 5" class="w-full" />
+      <label>{{ 'lbl_address' | translate }}</label>
+      <input pInputText formControlName="address" class="w-full" />
     </div>
 
     <div class="field">
-      <label>Telefon</label>
-      <input pInputText formControlName="phone" placeholder="+998901234567" class="w-full" />
+      <label>{{ 'lbl_phone' | translate }}</label>
+      <input pInputText formControlName="phone" class="w-full" />
     </div>
 
   </form>
 
   <ng-template pTemplate="footer">
-    <p-button label="Bekor" [text]="true" severity="secondary" (onClick)="dialogVisible.set(false)" />
-    <p-button
-      [label]="editingId() ? 'Saqlash' : 'Yaratish'"
-      icon="pi pi-check"
-      [loading]="saving()"
-      [disabled]="form.invalid || saving()"
-      (onClick)="save()"
-    />
+    <p-button [label]="'btn_cancel' | translate" severity="secondary" (onClick)="dialogVisible.set(false)" />
+    <p-button [label]="'btn_save' | translate" [loading]="saving()" (onClick)="save()" />
   </ng-template>
 </p-dialog>

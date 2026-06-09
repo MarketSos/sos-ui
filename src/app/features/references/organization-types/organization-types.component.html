@@ -3,27 +3,25 @@
 <div class="page">
   <div class="page-header">
     <div>
-      <h1>Tashkilot turlari</h1>
-      <p>Tashkilot turlarini (do'kon, ombor va h.k.) boshqarish.</p>
+      <h1>{{ 'page_orgtypes_title' | translate }}</h1>
+      <p>{{ 'page_orgtypes_desc' | translate }}</p>
     </div>
-    <button pButton type="button" label="Tashkilot turi qo'shish" icon="pi pi-plus" (click)="openCreate()"></button>
+    <button pButton type="button" [label]="'page_orgtypes_add' | translate" icon="pi pi-plus" (click)="openCreate()"></button>
   </div>
 
   <p-table [value]="organizationTypes()" [loading]="loading()" styleClass="p-datatable-sm">
     <ng-template pTemplate="header">
       <tr>
-        <th>Kod</th>
-        <th>Nom UZ</th>
-        <th>Nom RU</th>
-        <th>Icon</th>
-        <th style="width:170px">Amallar</th>
+        <th>{{ 'lbl_code' | translate }}</th>
+        <th>{{ 'lbl_name' | translate }}</th>
+        <th>{{ 'lbl_icon' | translate }}</th>
+        <th style="width:170px">{{ 'lbl_actions' | translate }}</th>
       </tr>
     </ng-template>
     <ng-template pTemplate="body" let-item>
       <tr>
         <td><code>{{ item.code }}</code></td>
-        <td>{{ item.nameUz }}</td>
-        <td>{{ item.nameRu }}</td>
+        <td>{{ item | entityName }}</td>
         <td>{{ item.icon ?? '—' }}</td>
         <td class="table-actions">
           <button pButton type="button" icon="pi pi-pencil" [text]="true" severity="secondary" (click)="openEdit(item)"></button>
@@ -32,30 +30,30 @@
       </tr>
     </ng-template>
     <ng-template pTemplate="emptymessage">
-      <tr><td colspan="5" class="empty-msg">Tashkilot turi topilmadi</td></tr>
+      <tr><td colspan="4" class="empty-msg">{{ 'page_orgtypes_empty' | translate }}</td></tr>
     </ng-template>
   </p-table>
 </div>
 
-<p-dialog header="Tashkilot turi" [visible]="dialogVisible()" (visibleChange)="dialogVisible.set($event)" [modal]="true" [draggable]="false" [style]="{ width: '520px' }">
+<p-dialog [header]="'dlg_orgtype' | translate" [visible]="dialogVisible()" (visibleChange)="dialogVisible.set($event)" [modal]="true" [draggable]="false" [style]="{ width: '520px' }">
   <form [formGroup]="form" class="dialog-form">
-    <label>Kod</label>
+    <label>{{ 'lbl_code' | translate }}</label>
     <input pInputText formControlName="code" placeholder="GROCERY" [readonly]="editMode()" />
 
-    <label>Nom UZ</label>
+    <label>{{ 'lbl_name_uz' | translate }}</label>
     <input pInputText formControlName="nameUz" placeholder="Oziq-ovqat do'koni" />
 
-    <label>Nom RU</label>
+    <label>{{ 'lbl_name_ru' | translate }}</label>
     <input pInputText formControlName="nameRu" placeholder="Продуктовый магазин" />
 
-    <label>Nom EN</label>
+    <label>{{ 'lbl_name_en' | translate }}</label>
     <input pInputText formControlName="nameEn" placeholder="Grocery Store" />
 
-    <label>Icon</label>
+    <label>{{ 'lbl_icon' | translate }}</label>
     <input pInputText formControlName="icon" placeholder="pi-shopping-basket" />
   </form>
   <ng-template pTemplate="footer">
-    <button pButton type="button" label="Bekor qilish" [text]="true" severity="secondary" (click)="dialogVisible.set(false)"></button>
-    <button pButton type="button" label="Saqlash" [disabled]="form.invalid || saving()" (click)="save()"></button>
+    <button pButton type="button" [label]="'btn_cancel' | translate" [text]="true" severity="secondary" (click)="dialogVisible.set(false)"></button>
+    <button pButton type="button" [label]="'btn_save' | translate" [disabled]="form.invalid || saving()" (click)="save()"></button>
   </ng-template>
 </p-dialog>

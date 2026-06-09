@@ -14,26 +14,26 @@
     </div>
 
     <nav class="sidebar-nav">
-      @for (item of navItems(); track item.label) {
+      @for (item of navItems(); track item.labelKey) {
         @if (item | visibleFor: (user$ | async)?.role) {
           @if (item.children) {
             <!-- Group -->
             <div class="nav-group">
               <button
                 class="nav-group-toggle"
-                [class.active]="isExpanded(item.label)"
-                (click)="toggleGroup(item.label)"
-                [title]="collapsed() ? item.label : ''"
+                [class.active]="isExpanded(item.labelKey)"
+                (click)="toggleGroup(item.labelKey)"
+                [title]="collapsed() ? (item.labelKey | translate) : ''"
               >
                 <i [class]="item.icon"></i>
                 @if (!collapsed()) {
-                  <span>{{ item.label }}</span>
-                  <i class="pi group-arrow" [class.pi-angle-down]="isExpanded(item.label)" [class.pi-angle-right]="!isExpanded(item.label)"></i>
+                  <span>{{ item.labelKey | translate }}</span>
+                  <i class="pi group-arrow" [class.pi-angle-down]="isExpanded(item.labelKey)" [class.pi-angle-right]="!isExpanded(item.labelKey)"></i>
                 }
               </button>
-              @if (isExpanded(item.label) && !collapsed()) {
+              @if (isExpanded(item.labelKey) && !collapsed()) {
                 <div class="nav-children">
-                  @for (child of item.children; track child.label) {
+                  @for (child of item.children; track child.labelKey) {
                     @if (child | visibleFor: (user$ | async)?.role) {
                       <a
                         class="nav-child"
@@ -41,7 +41,7 @@
                         routerLinkActive="active"
                       >
                         <i [class]="child.icon"></i>
-                        <span>{{ child.label }}</span>
+                        <span>{{ child.labelKey | translate }}</span>
                       </a>
                     }
                   }
@@ -54,11 +54,11 @@
               class="nav-item"
               [routerLink]="item.route"
               routerLinkActive="active"
-              [title]="collapsed() ? item.label : ''"
+              [title]="collapsed() ? (item.labelKey | translate) : ''"
             >
               <i [class]="item.icon"></i>
               @if (!collapsed()) {
-                <span>{{ item.label }}</span>
+                <span>{{ item.labelKey | translate }}</span>
               }
             </a>
           }
@@ -67,7 +67,7 @@
     </nav>
 
     <div class="sidebar-footer">
-      <button class="collapse-btn" (click)="toggleSidebar()" [title]="collapsed() ? 'Kengaytirish' : 'Yig\'ish'">
+      <button class="collapse-btn" (click)="toggleSidebar()" [title]="collapsed() ? ('sidebar_expand' | translate) : ('sidebar_collapse' | translate)">
         <i class="pi" [class.pi-angle-double-left]="!collapsed()" [class.pi-angle-double-right]="collapsed()"></i>
       </button>
     </div>
@@ -84,6 +84,31 @@
         </button>
       </div>
       <div class="topbar-right">
+
+        <!-- Language Dropdown -->
+        <div class="lang-dropdown" [class.open]="langDropdownOpen()">
+          <button class="lang-trigger" (click)="toggleLangDropdown($event)">
+            <img class="lang-flag-img" [src]="currentLocaleObj.flagImg" [alt]="currentLocaleObj.short" />
+            <span class="lang-short">{{ currentLocaleObj.short }}</span>
+            <i class="pi pi-angle-down lang-arrow"></i>
+          </button>
+          <div class="lang-panel">
+            @for (loc of supportedLocales; track loc.code) {
+              <button
+                class="lang-option"
+                [class.active]="currentLocale === loc.code"
+                (click)="setLocale(loc.code)"
+              >
+                <img class="lang-flag-img" [src]="loc.flagImg" [alt]="loc.short" />
+                <span class="lang-label">{{ loc.label }}</span>
+                @if (currentLocale === loc.code) {
+                  <i class="pi pi-check lang-check"></i>
+                }
+              </button>
+            }
+          </div>
+        </div>
+
         @if (user$ | async; as user) {
           <div class="user-info">
             <div class="user-avatar">{{ user.userName.charAt(0).toUpperCase() }}</div>
@@ -91,23 +116,19 @@
               <span class="user-name">{{ user.userName }}</span>
               <span class="user-role">{{ user.role }}</span>
             </div>
+            <button class="logout-btn" (click)="logout()" [title]="'logout' | translate">
+              <i class="pi pi-sign-out"></i>
+            </button>
           </div>
         }
-        <p-button
-          icon="pi pi-sign-out"
-          [rounded]="true"
-          [text]="true"
-          severity="secondary"
-          (onClick)="logout()"
-          title="Chiqish"
-        />
+
       </div>
     </header>
 
     <!-- PAGE CONTENT -->
-    <main class="page-content">
+    <div class="page-content">
       <router-outlet />
-    </main>
+    </div>
 
   </div>
 </div>

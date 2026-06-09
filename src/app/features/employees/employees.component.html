@@ -4,10 +4,10 @@
 <div class="page">
   <div class="page-header">
     <div>
-      <h1>Xodimlar</h1>
-      <p>Tashkilot xodimlari ro'yxati</p>
+      <h1>{{ 'page_employees_title' | translate }}</h1>
+      <p>{{ 'page_employees_desc' | translate }}</p>
     </div>
-    <p-button label="Yangi xodim" icon="pi pi-plus" (onClick)="openCreate()" />
+    <p-button [label]="'page_employees_add' | translate" icon="pi pi-plus" (onClick)="openCreate()" />
   </div>
 
   <p-iconfield>
@@ -34,7 +34,7 @@
         <td>{{ emp.specializationName ?? '—' }}</td>
         <td>{{ emp.employeeRankName ?? '—' }}</td>
         <td>
-          <p-tag [value]="emp.isActive ? 'Faol' : 'Nofaol'"
+          <p-tag [value]="emp.isActive ? ('lbl_active' | translate) : ('lbl_inactive' | translate)"
                  [severity]="emp.isActive ? 'success' : 'secondary'" />
         </td>
         <td>
@@ -56,7 +56,7 @@
     </ng-template>
     <ng-template pTemplate="emptymessage">
       <tr><td colspan="6" class="empty-msg">
-        <i class="pi pi-users"></i><span>Xodimlar topilmadi</span>
+        <i class="pi pi-users"></i><span>{{ 'page_employees_empty' | translate }}</span>
       </td></tr>
     </ng-template>
   </p-table>

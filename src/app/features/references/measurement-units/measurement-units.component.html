@@ -3,56 +3,54 @@
 <div class="page">
   <div class="page-header">
     <div>
-      <h1>O'lchov birliklari</h1>
-      <p>Mahsulotlar uchun o'lchov birliklarini boshqarish.</p>
+      <h1>{{ 'page_units_title' | translate }}</h1>
+      <p>{{ 'page_units_desc' | translate }}</p>
     </div>
-    <button pButton type="button" label="O'lchov birligi qo'shish" icon="pi pi-plus" (click)="openCreate()"></button>
+    <button pButton type="button" [label]="'page_units_add' | translate" icon="pi pi-plus" (click)="openCreate()"></button>
   </div>
 
   <p-table [value]="measurementUnits()" [loading]="loading()" styleClass="p-datatable-sm">
     <ng-template pTemplate="header">
       <tr>
-        <th>Kod</th>
-        <th>Nom UZ</th>
-        <th>Nom RU</th>
-        <th>Og'irlik</th>
+        <th>{{ 'lbl_code' | translate }}</th>
+        <th>{{ 'lbl_name' | translate }}</th>
+        <th>{{ 'lbl_weight_based' | translate }}</th>
       </tr>
     </ng-template>
     <ng-template pTemplate="body" let-item>
       <tr>
         <td><code>{{ item.code }}</code></td>
-        <td>{{ item.nameUz }}</td>
-        <td>{{ item.nameRu }}</td>
-        <td>{{ item.isWeightBased ? 'Ha' : 'Yo‘q' }}</td>
+        <td>{{ item | entityName }}</td>
+        <td>{{ item.isWeightBased ? ('lbl_yes' | translate) : ('lbl_no' | translate) }}</td>
       </tr>
     </ng-template>
     <ng-template pTemplate="emptymessage">
-      <tr><td colspan="4" class="empty-msg">O'lchov birliklari topilmadi</td></tr>
+      <tr><td colspan="3" class="empty-msg">{{ 'page_units_empty' | translate }}</td></tr>
     </ng-template>
   </p-table>
 </div>
 
-<p-dialog header="O'lchov birligi" [visible]="dialogVisible()" (visibleChange)="dialogVisible.set($event)" [modal]="true" [draggable]="false" [style]="{ width: '520px' }">
+<p-dialog [header]="'dlg_unit' | translate" [visible]="dialogVisible()" (visibleChange)="dialogVisible.set($event)" [modal]="true" [draggable]="false" [style]="{ width: '520px' }">
   <form [formGroup]="form" class="dialog-form">
-    <label>Kod</label>
+    <label>{{ 'lbl_code' | translate }}</label>
     <input pInputText formControlName="code" placeholder="KG" />
 
-    <label>Nom UZ</label>
+    <label>{{ 'lbl_name_uz' | translate }}</label>
     <input pInputText formControlName="nameUz" placeholder="Kilogramm" />
 
-    <label>Nom RU</label>
+    <label>{{ 'lbl_name_ru' | translate }}</label>
     <input pInputText formControlName="nameRu" placeholder="Килограмм" />
 
-    <label>Nom EN</label>
+    <label>{{ 'lbl_name_en' | translate }}</label>
     <input pInputText formControlName="nameEn" placeholder="Kilogram" />
 
     <div class="checkbox-row">
       <input type="checkbox" id="isWeightBased" formControlName="isWeightBased" />
-      <label for="isWeightBased">Og'irlik asosida</label>
+      <label for="isWeightBased">{{ 'lbl_weight_based' | translate }}</label>
     </div>
   </form>
   <ng-template pTemplate="footer">
-    <button pButton type="button" label="Bekor qilish" [text]="true" severity="secondary" (click)="dialogVisible.set(false)"></button>
-    <button pButton type="button" label="Saqlash" [disabled]="form.invalid || saving()" (click)="save()"></button>
+    <button pButton type="button" [label]="'btn_cancel' | translate" [text]="true" severity="secondary" (click)="dialogVisible.set(false)"></button>
+    <button pButton type="button" [label]="'btn_save' | translate" [disabled]="form.invalid || saving()" (click)="save()"></button>
   </ng-template>
 </p-dialog>
