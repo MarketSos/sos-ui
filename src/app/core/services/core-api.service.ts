@@ -1,24 +1,22 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ApiService } from './api.service';
+import { LocalizableNameDto, LocalizableNameRequest } from '../models/localizable-name.model';
 
 // ── Models ────────────────────────────────────────────────────────────────────
 export interface UserDto {
-  id: string;
-  userName: string;
-  email: string;
-  roles: string[];
-  isActive: boolean;
-  storeId: string | null;
+  id:             string;
+  userName:       string;
+  email:          string;
+  roles:          string[];
+  isActive:       boolean;
+  storeId:        string | null;
   organizationId: string;
 }
 
-export interface RoleSummaryDto {
-  id: string;
-  name: string;
-  nameUz: string;
-  nameRu: string;
-  nameEn: string | null;
+export interface RoleSummaryDto extends LocalizableNameDto {
+  id:              string;
+  name:            string;
   permissionCount: number;
 }
 
@@ -26,79 +24,76 @@ export interface RoleDto extends RoleSummaryDto {
   permissions: string[];
 }
 
-export interface OrgTypeDto {
-  id: string;
+export interface OrgTypeDto extends LocalizableNameDto {
+  id:   string;
   code: string;
-  nameUz: string;
-  nameRu: string;
-  nameEn: string | null;
   icon: string | null;
 }
 
-export interface SpecializationDto {
-  id: string;
+export interface SpecializationDto extends LocalizableNameDto {
+  id:   string;
   code: string;
-  nameUz: string;
-  nameRu: string;
-  nameEn: string | null;
-  nameUzKiril: string | null;
 }
 
-export interface CategoryDto {
-  id: string;
-  nameUz: string;
-  nameRu: string;
-  nameEn: string | null;
+export interface CategoryDto extends LocalizableNameDto {
+  id:       string;
   parentId: string | null;
 }
 
 export interface MeasurementUnitDto {
-  id: string;
-  code: string;
-  nameUz: string;
-  nameRu: string;
-  nameEn: string | null;
+  id:           string;
+  code:         string;
+  nameUz:       string;
+  nameRu:       string;
+  nameEn:       string | null;
   isWeightBased: boolean;
 }
 
-export interface BrandDto {
-  id: string;
-  nameUz: string;
-  nameRu: string;
-  nameEn: string | null;
-  nameUzKiril: string | null;
+export interface BrandDto extends LocalizableNameDto {
+  id:   string;
+  code: string;
 }
 
-export interface ManufacturerDto {
-  id: string;
-  nameUz: string;
-  nameRu: string;
-  nameEn: string | null;
-  nameUzKiril: string | null;
+export interface ManufacturerDto extends LocalizableNameDto {
+  id:          string;
+  code:        string;
+  addressLine: string | null;
+  phone:       string | null;
 }
 
 export interface EmployeeSummaryDto {
-  id: string;
-  userId: string;
-  fullName: string;
-  phone: string | null;
+  id:                 string;
+  userId:             string;
+  fullName:           string;
+  phone:              string | null;
   specializationName: string | null;
-  employeeRankName: string | null;
-  isActive: boolean;
+  employeeRankName:   string | null;
+  isActive:           boolean;
 }
 
 export interface EmployeeDto extends EmployeeSummaryDto {
-  email: string;
-  firstName: string;
-  lastName: string;
-  middleName: string | null;
-  birthDate: string | null;
-  gender: string | null;
+  email:            string;
+  firstName:        string;
+  lastName:         string;
+  middleName:       string | null;
+  birthDate:        string | null;
+  gender:           string | null;
   specializationId: string | null;
-  employeeRankId: string | null;
-  hireDate: string | null;
-  fireDate: string | null;
-  organizationId: string;
+  employeeRankId:   string | null;
+  hireDate:         string | null;
+  fireDate:         string | null;
+  organizationId:   string;
+}
+
+// ── OrgType request ───────────────────────────────────────────────────────────
+export interface OrgTypeRequest extends LocalizableNameRequest {
+  code?: string;
+  icon?: string;
+}
+
+// ── Specialization request ────────────────────────────────────────────────────
+export interface SpecializationRequest extends LocalizableNameRequest {
+  code: string;
 }
 
 // ── Service ───────────────────────────────────────────────────────────────────
@@ -145,11 +140,11 @@ export class CoreApiService {
     return this.api.get<OrgTypeDto[]>('core', 'org-types');
   }
 
-  createOrgType(req: { code: string; nameUz: string; nameRu: string; nameEn?: string; icon?: string }): Observable<{ id: string }> {
+  createOrgType(req: OrgTypeRequest): Observable<{ id: string }> {
     return this.api.post<{ id: string }>('core', 'org-types', req);
   }
 
-  updateOrgType(id: string, req: { nameUz: string; nameRu: string; nameEn?: string; icon?: string }): Observable<void> {
+  updateOrgType(id: string, req: OrgTypeRequest): Observable<void> {
     return this.api.put<void>('core', `org-types/${id}`, req);
   }
 
@@ -162,11 +157,11 @@ export class CoreApiService {
     return this.api.get<SpecializationDto[]>('core', 'specializations');
   }
 
-  createSpecialization(req: { code: string; nameUz: string; nameRu: string; nameEn?: string; nameUzKiril?: string; }): Observable<{ specializationId: string }> {
+  createSpecialization(req: SpecializationRequest): Observable<{ specializationId: string }> {
     return this.api.post<{ specializationId: string }>('core', 'specializations', req);
   }
 
-  updateSpecialization(id: string, req: { code: string; nameUz: string; nameRu: string; nameEn?: string; nameUzKiril?: string; }): Observable<void> {
+  updateSpecialization(id: string, req: SpecializationRequest): Observable<void> {
     return this.api.put<void>('core', `specializations/${id}`, req);
   }
 
@@ -183,7 +178,7 @@ export class CoreApiService {
     return this.api.get<MeasurementUnitDto[]>('catalog', 'measurement-units');
   }
 
-  createMeasurementUnit(req: { code: string; nameUz: string; nameRu: string; nameEn?: string; isWeightBased?: boolean; }): Observable<{ id: string }> {
+  createMeasurementUnit(req: { code: string; nameUz: string; nameRu: string; nameEn?: string; isWeightBased?: boolean }): Observable<{ id: string }> {
     return this.api.post<{ id: string }>('catalog', 'measurement-units', req);
   }
 
@@ -192,11 +187,11 @@ export class CoreApiService {
     return this.api.get<BrandDto[]>('catalog', 'brands');
   }
 
-  createBrand(req: { nameUz: string; nameRu: string; nameEn?: string; nameUzKiril?: string; }): Observable<{ id: string }> {
+  createBrand(req: LocalizableNameRequest & { code: string }): Observable<{ id: string }> {
     return this.api.post<{ id: string }>('catalog', 'brands', req);
   }
 
-  updateBrand(id: string, req: { nameUz: string; nameRu: string; nameEn?: string; nameUzKiril?: string; }): Observable<void> {
+  updateBrand(id: string, req: LocalizableNameRequest & { code: string }): Observable<void> {
     return this.api.put<void>('catalog', `brands/${id}`, req);
   }
 
@@ -209,11 +204,11 @@ export class CoreApiService {
     return this.api.get<ManufacturerDto[]>('catalog', 'manufacturers');
   }
 
-  createManufacturer(req: { nameUz: string; nameRu: string; nameEn?: string; nameUzKiril?: string; }): Observable<{ id: string }> {
+  createManufacturer(req: LocalizableNameRequest & { code: string; addressLine?: string; phone?: string }): Observable<{ id: string }> {
     return this.api.post<{ id: string }>('catalog', 'manufacturers', req);
   }
 
-  updateManufacturer(id: string, req: { nameUz: string; nameRu: string; nameEn?: string; nameUzKiril?: string; }): Observable<void> {
+  updateManufacturer(id: string, req: LocalizableNameRequest & { code: string; addressLine?: string; phone?: string }): Observable<void> {
     return this.api.put<void>('catalog', `manufacturers/${id}`, req);
   }
 

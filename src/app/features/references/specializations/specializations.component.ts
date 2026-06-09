@@ -39,7 +39,7 @@ export class SpecializationsComponent implements OnInit {
     nameUz:      ['', Validators.required],
     nameRu:      ['', Validators.required],
     nameEn:      [''],
-    nameUzKiril: [''],
+    nameUzCyrl: [''],
   });
 
   ngOnInit(): void { this.load(); }
@@ -55,7 +55,7 @@ export class SpecializationsComponent implements OnInit {
   openCreate(): void {
     this.editMode.set(false);
     this.selected.set(null);
-    this.form.reset({ code: '', nameUz: '', nameRu: '', nameEn: '', nameUzKiril: '' });
+    this.form.reset({ code: '', nameUz: '', nameRu: '', nameEn: '', nameUzCyrl: '' });
     this.dialogVisible.set(true);
   }
 
@@ -67,7 +67,7 @@ export class SpecializationsComponent implements OnInit {
       nameUz:      spec.nameUz      ?? '',
       nameRu:      spec.nameRu      ?? '',
       nameEn:      spec.nameEn      ?? '',
-      nameUzKiril: spec.nameUzKiril ?? '',
+      nameUzCyrl: spec.nameUzCyrl ?? '',
     });
     this.dialogVisible.set(true);
   }
@@ -80,14 +80,14 @@ export class SpecializationsComponent implements OnInit {
       nameUz: string | null;
       nameRu: string | null;
       nameEn: string | null;
-      nameUzKiril: string | null;
+      nameUzCyrl: string | null;
     };
     const request = {
       code:        data.code        ?? '',
       nameUz:      data.nameUz      ?? '',
       nameRu:      data.nameRu      ?? '',
       nameEn:      data.nameEn      ?? undefined,
-      nameUzKiril: data.nameUzKiril ?? undefined,
+      nameUzCyrl: data.nameUzCyrl ?? undefined,
     };
 
     const action$: Observable<unknown> = this.editMode() && this.selected()

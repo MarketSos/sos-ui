@@ -40,7 +40,7 @@ export class ManufacturersComponent implements OnInit {
     nameUz:      ['', Validators.required],
     nameRu:      ['', Validators.required],
     nameEn:      [''],
-    nameUzKiril: [''],
+    nameUzCyrl: [''],
   });
 
   ngOnInit(): void { this.load(); }
@@ -56,7 +56,7 @@ export class ManufacturersComponent implements OnInit {
   openCreate(): void {
     this.editMode.set(false);
     this.selected.set(null);
-    this.form.reset({ nameUz: '', nameRu: '', nameEn: '', nameUzKiril: '' });
+    this.form.reset({ nameUz: '', nameRu: '', nameEn: '', nameUzCyrl: '' });
     this.dialogVisible.set(true);
   }
 
@@ -67,7 +67,7 @@ export class ManufacturersComponent implements OnInit {
       nameUz:      manufacturer.nameUz      ?? '',
       nameRu:      manufacturer.nameRu      ?? '',
       nameEn:      manufacturer.nameEn      ?? '',
-      nameUzKiril: manufacturer.nameUzKiril ?? '',
+      nameUzCyrl: manufacturer.nameUzCyrl ?? '',
     });
     this.dialogVisible.set(true);
   }
@@ -79,13 +79,13 @@ export class ManufacturersComponent implements OnInit {
       nameUz: string | null;
       nameRu: string | null;
       nameEn: string | null;
-      nameUzKiril: string | null;
+      nameUzCyrl: string | null;
     };
     const request = {
       nameUz:      data.nameUz      ?? '',
       nameRu:      data.nameRu      ?? '',
       nameEn:      data.nameEn      ?? undefined,
-      nameUzKiril: data.nameUzKiril ?? undefined,
+      nameUzCyrl: data.nameUzCyrl ?? undefined,
     };
 
     const action$: Observable<unknown> = this.editMode() && this.selected()

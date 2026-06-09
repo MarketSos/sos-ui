@@ -1,13 +1,6 @@
 import { Pipe, PipeTransform, inject } from '@angular/core';
+import { LocalizableNamePartial } from '../models/localizable-name.model';
 import { LocaleService } from './locale.service';
-
-type MultilingualEntity = {
-  nameUz?: string | null;
-  nameRu?: string | null;
-  nameEn?: string | null;
-  nameUzKiril?: string | null;
-  nameKk?: string | null;
-};
 
 /**
  * Returns the name field of a multilingual entity based on the current locale.
@@ -21,7 +14,7 @@ type MultilingualEntity = {
 export class EntityNamePipe implements PipeTransform {
   private localeService = inject(LocaleService);
 
-  transform(entity: MultilingualEntity | null | undefined): string {
+  transform(entity: LocalizableNamePartial | null | undefined): string {
     this.localeService.currentLocale(); // register signal dependency
     return this.localeService.entityName(entity);
   }

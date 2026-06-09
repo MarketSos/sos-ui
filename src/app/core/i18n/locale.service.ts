@@ -19,22 +19,22 @@ export class LocaleService {
     return TRANSLATIONS[locale]?.[key] ?? TRANSLATIONS['uz'][key] ?? key;
   }
 
-  /** Returns the localized name from an entity that has nameUz/nameRu/nameEn/nameUzKiril fields */
+  /** Returns the localized name from a multilingual entity */
   entityName(entity: {
     nameUz?: string | null;
     nameRu?: string | null;
     nameEn?: string | null;
-    nameUzKiril?: string | null;
+    nameUzCyrl?: string | null;
     nameKk?: string | null;
   } | null | undefined): string {
     if (!entity) return '';
     const locale = this.currentLocale();
     switch (locale) {
-      case 'ru':      return entity.nameRu      || entity.nameUz || '';
-      case 'en':      return entity.nameEn      || entity.nameUz || '';
-      case 'uz-cyrl': return entity.nameUzKiril || entity.nameUz || '';
-      case 'kk':      return entity.nameKk      || entity.nameUz || '';
-      default:        return entity.nameUz                       || '';
+      case 'ru':      return entity.nameRu     || entity.nameUz || '';
+      case 'en':      return entity.nameEn     || entity.nameUz || '';
+      case 'uz-cyrl': return entity.nameUzCyrl || entity.nameUz || '';
+      case 'kk':      return entity.nameKk     || entity.nameUz || '';
+      default:        return entity.nameUz                      || '';
     }
   }
 

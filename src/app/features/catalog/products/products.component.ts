@@ -67,7 +67,7 @@ export class ProductsComponent implements OnInit {
     nameUz:      ['', [Validators.required, Validators.minLength(2)]],
     nameRu:      ['', [Validators.required, Validators.minLength(2)]],
     nameEn:      [''],
-    nameUzKiril: [''],
+    nameUzCyrl: [''],
     barcode:     ['', [Validators.required]],
   });
 
@@ -139,7 +139,7 @@ export class ProductsComponent implements OnInit {
       nameUz:      v.nameUz!,
       nameRu:      v.nameRu!,
       nameEn:      v.nameEn   || undefined,
-      nameUzKiril: v.nameUzKiril || undefined,
+      nameUzCyrl: v.nameUzCyrl || undefined,
       barcode:     v.barcode!,
       categoryId:  cat.id,
     }).pipe(catchError(err => {
